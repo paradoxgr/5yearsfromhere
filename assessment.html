@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gap Assessment — 5 Years From Here</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@800;900&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{font-family:'Space Mono',monospace;color:#080808;overflow-x:hidden;min-height:100vh;}
+.bg{
+  background-image:
+    linear-gradient(rgba(255,255,255,0.07) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(255,255,255,0.07) 1px,transparent 1px),
+    linear-gradient(rgba(255,255,255,0.74),rgba(255,255,255,0.70) 50%,rgba(255,255,255,0.74)),
+    linear-gradient(180deg,#3D1E68 0%,#6B2080 10%,#A82878 22%,#D03080 34%,#E84895 44%,#F070B0 52%,#FFE0F0 60%,#F090C8 66%,#D04898 74%,#8A2878 83%,#4A1E70 91%,#3A1860 100%);
+  background-size:68px 68px,68px 68px,100% 100%,100% 100%;
+  min-height:100vh;
+}
+.site-header{display:flex;justify-content:space-between;align-items:center;padding:1.25rem 2rem;border-bottom:0.5px solid rgba(8,8,8,0.1);background:rgba(255,255,255,0.2);}
+.logo{font-family:'Barlow Condensed',Impact,sans-serif;font-size:20px;font-weight:900;letter-spacing:-0.5px;text-transform:uppercase;color:#080808;text-decoration:none;}
+.logo span{color:transparent;-webkit-text-stroke:1.5px #5C2E00;}
+.back{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:rgba(8,8,8,0.55);text-decoration:none;}
+.back:hover{color:#080808;}
+.wrap{max-width:560px;margin:0 auto;padding:2rem 1.25rem;}
+.pill{display:inline-block;font-size:11px;font-weight:500;letter-spacing:2px;text-transform:uppercase;padding:5px 14px;border-radius:99px;}
+.vpill{display:block;width:100%;text-align:left;font-size:14px;font-weight:500;padding:14px 18px;border-radius:4px;cursor:pointer;background:rgba(255,255,255,0.8);color:#080808;font-family:'Space Mono',monospace;}
+.ropt{display:flex;gap:14px;padding:16px 18px;border-radius:4px;cursor:pointer;min-height:52px;width:100%;font-family:'Space Mono',monospace;}
+input[type=radio]{width:18px;height:18px;flex-shrink:0;pointer-events:none;}
+.bar-track{height:3px;background:rgba(8,8,8,0.12);border-radius:3px;}
+.bar-fill{height:3px;border-radius:3px;transition:width 0.4s ease;}
+.nav-btn{font-size:14px;padding:12px 28px;cursor:pointer;border-radius:4px;font-family:'Space Mono',monospace;}
+.big-score{font-size:68px;font-weight:900;color:#080808;line-height:1;font-family:'Barlow Condensed',Impact,sans-serif;}
+.rb-track{height:5px;background:rgba(8,8,8,0.12);border-radius:5px;margin-top:6px;}
+.rb-fill{height:5px;border-radius:5px;}
+.field{width:100%;font-size:15px;padding:14px 16px;border-radius:4px;border:0.5px solid rgba(8,8,8,0.2);background:rgba(255,255,255,0.85);color:#080808;display:block;font-family:'Space Mono',monospace;}
+.field::placeholder{color:rgba(8,8,8,0.35);}
+.divider{height:0.5px;background:rgba(8,8,8,0.12);margin:1.75rem 0;}
+.ibox{padding:1.25rem 1.5rem;background:rgba(255,255,255,0.45);border-radius:4px;border:0.5px solid rgba(8,8,8,0.1);}
+@media(max-width:480px){
+  .wrap{padding:1.5rem 1rem;}
+  .site-header{padding:1rem 1.25rem;}
+  .nav-btn{font-size:13px;padding:11px 20px;}
+  .ropt{padding:14px 14px;gap:12px;}
+  .big-score{font-size:52px;}
+  .vpill{padding:13px 14px;font-size:13px;}
+}
+</style>
+</head>
+<body>
+<div class="bg">
+<header class="site-header">
+  <a href="index.html" class="logo">5years<span>fromhere</span></a>
+  <a href="index.html" class="back">&larr; Home</a>
+</header>
+<div id="root"></div>
+</div>
+<script>
+const OPTS=["a","b","c","d"];
+const OLABELS=["Critical gap","Moderate","Strong","Fully optimized"];
+const SCORES={a:2,b:5,c:8,d:10};
+const VNAMES={partner:"Partner / Spouse",report:"Direct report to me",managed:"I report to them"};
+const VDESCS={
+  partner:"The 11 questions ahead are framed for your relationship with your partner or spouse.",
+  report:"The 11 questions ahead are framed for your relationship with someone who directly reports to you.",
+  managed:"The 11 questions ahead are framed for your relationship with someone you directly report to."
+};
+const REL={
+  partner:[
+    {title:"Authentic Transparency",q:"Do you feel fully known by your partner — or are there still parts of you that stay hidden, edited, or protected?",labels:["Hidden Self: You hold back major parts of who you are because full honesty does not feel safe.","Selective Openness: You share some truth, but still edit yourself to avoid conflict, rejection, or judgment.","Mostly Known: You can usually be honest, but a few deeper thoughts, needs, or fears remain protected.","Fully Seen: You can show up honestly — emotionally, mentally, physically, and spiritually — without feeling the need to perform or hide."]},
+    {title:"Relationship Reciprocity",q:"Is your relationship balanced in openness, effort, emotional labor, and repair — or does one person consistently carry more of the weight?",labels:["One-Sided Load: One person gives, reveals, adjusts, or repairs far more than the other.","Uneven Exchange: There is love and effort, but the balance often feels inconsistent or unfair.","Mostly Reciprocal: Both people contribute, but certain areas still need better balance.","Mutual Investment: Openness, effort, sacrifice, and repair move both ways with maturity and consistency."]},
+    {title:"Presence Quality",q:"How much real, undistracted time do you spend together — not just being near each other, but actually being with each other?",labels:["Parallel Lives: You are around each other, but true presence is rare.","Interrupted Connection: You spend time together, but distraction, fatigue, or routine often dilute the connection.","Consistent Presence: You regularly create moments of real attention, conversation, affection, or shared experience.","Deep Attunement: Your time together restores connection because both people are mentally, emotionally, and physically present."]},
+    {title:"Behavioral Trust",q:"Can your partner consistently rely on your words, actions, moods, and follow-through over time?",labels:["Unreliable Pattern: Your partner cannot consistently trust what you say, how you react, or whether you will follow through.","Inconsistent Safety: You mean well, but your behavior, mood, or follow-through changes too often under pressure.","Generally Reliable: Your partner can usually count on you, though certain patterns still weaken trust.","Embodied Trust: Your actions, words, emotional steadiness, and follow-through make you feel safe to rely on."]},
+    {title:"Recovery Speed",q:"When conflict happens, how quickly do you repair, reconnect, and return to emotional safety?",labels:["Lingering Damage: Conflict leaves distance, resentment, silence, or emotional residue for too long.","Slow Repair: You eventually recover, but the repair takes more time and energy than it should.","Healthy Recovery: You can usually repair after conflict without letting it poison the relationship.","Rapid Reconnection: Conflict becomes information, not destruction — you repair quickly, learn, and return to connection with maturity."]},
+    {title:"Emotional Regulation",q:"Can you stay grounded during tension with your partner — or do your emotions take control of the interaction?",labels:["Emotionally Reactive: Tension quickly turns into defensiveness, shutdown, anger, anxiety, or escalation.","Partially Grounded: You can regulate sometimes, but pressure still pulls you into old reactions.","Mostly Steady: You usually stay grounded enough to respond instead of react.","Regulated Presence: Even under tension, you remain clear, respectful, emotionally aware, and connected to the bigger picture."]},
+    {title:"Listening Acuity",q:"Can you accurately understand what your partner meant, felt, or needed before defending, correcting, or responding?",labels:["Low Listening: You often respond to your own interpretation instead of what your partner actually meant.","Partial Listening: You hear the words, but often miss the emotion, need, or deeper meaning underneath.","Accurate Listening: You can usually reflect back what your partner meant and why it mattered.","Deep Attunement: Your partner feels heard because you listen for meaning, emotion, need, and truth before responding."]},
+    {title:"Directional Alignment",q:"Are you and your partner moving in the same direction — in values, vision, lifestyle, and what you each want life to become?",labels:["Different Futures: You may care about each other, but your visions for life are pulling in different directions.","Unclear Direction: You have some shared values, but the future still feels vague, mismatched, or avoided.","Mostly Aligned: Your lives are generally moving in the same direction, though some details need clearer agreement.","Shared Trajectory: Your values, vision, lifestyle, and long-term decisions are pointed toward the same future."]},
+    {title:"Decision Clarity",q:"Can the two of you make decisions about finances, family, lifestyle, and the future without constant friction, delay, or resentment?",labels:["Decision Gridlock: Important decisions create conflict, avoidance, power struggles, or resentment.","Slow and Stressful: Decisions get made, but the process often drains connection and creates tension.","Functional Clarity: You can usually reach decisions with reasonable communication and compromise.","Aligned Execution: You make important decisions with clarity, respect, shared logic, and emotional maturity."]},
+    {title:"Communication Impact",q:"When you share an idea, need, or concern with your partner, how often does it actually land — understood, considered, and taken seriously?",labels:["Not Landing: Your words often feel ignored, dismissed, misunderstood, or minimized.","Inconsistent Impact: Sometimes your message lands, but too often it gets lost in defensiveness or distraction.","Usually Received: Your partner generally hears and considers what you are trying to communicate.","Clearly Integrated: Your communication creates understanding, adjustment, and deeper connection — not just conversation."]},
+    {title:"Execution Rate",q:"Do your conversations about what needs to change actually result in changed behavior — or do the same patterns keep repeating?",labels:["Repeated Loops: You talk about change, but the same issues keep returning with little evidence of progress.","Temporary Change: Behavior improves briefly, but the old pattern usually comes back.","Real Progress: Conversations often lead to noticeable effort, adjustment, and better patterns.","Integrated Change: What you discuss becomes lived behavior — the relationship actually upgrades after honest conversations."]}
+  ],
+  report:[
+    {title:"Authentic Transparency",q:"Does this person feel safe being fully honest with you about challenges, mistakes, and concerns — or do they tell you what you want to hear?",labels:["Managed Truth — They filter, hide, or soften the truth because honesty does not feel fully safe.","Selective Candor — They are honest in low-risk moments but still hold back when pressure, mistakes, or conflict appear.","Mostly Open Channel — They usually tell you what you need to hear, even when the conversation is uncomfortable.","Radical Professional Candor — They can bring you truth early, clearly, and respectfully without fear or performance."]},
+    {title:"Relationship Reciprocity",q:"Is this relationship balanced in accountability and contribution, or are you consistently carrying more than your share of the leadership load?",labels:["Leadership Drain — You are carrying too much of the thinking, accountability, correction, or follow-through.","Uneven Load — They contribute, but you still have to over-lead, over-remind, or over-correct too often.","Reliable Partnership — Accountability and contribution are mostly balanced, with only occasional leadership drag.","Mutual Ownership — They carry their side with maturity, initiative, and ownership that makes leadership lighter."]},
+    {title:"Presence Quality",q:"How much real, focused, developmental time do you give this person — not reactive or transactional contact?",labels:["Transactional Contact Only — Most interaction is reactive, rushed, or task-based with little real development.","Inconsistent Attention — You give some focused time, but development often gets crowded out by urgency.","Intentional Development — You regularly create focused moments for coaching, clarity, and growth.","High-Touch Leadership — Your presence actively develops this person's judgment, confidence, and performance."]},
+    {title:"Behavioral Trust",q:"Can this person consistently predict your standards, your response under pressure, and your follow-through — or do you create uncertainty?",labels:["Unclear Signal — Your standards, responses, or follow-through are inconsistent enough to create uncertainty.","Some Predictability — They can usually read you, but pressure still creates confusion or mixed signals.","Steady Standard — Your expectations and responses are mostly clear, consistent, and reliable.","Trustworthy Operating Rhythm — They know your standards, trust your follow-through, and can operate with confidence around you."]},
+    {title:"Recovery Speed",q:"When performance falls short or tension surfaces, how quickly do you address it directly and return the relationship to productive footing?",labels:["Avoided Friction — Issues linger, tension builds, and performance gaps go unaddressed too long.","Delayed Repair — You eventually address the issue, but the lag costs momentum, trust, or clarity.","Timely Correction — You usually address tension or underperformance before it turns into a larger problem.","Clean Fast Reset — You name the issue, repair the working relationship, clarify the standard, and move forward quickly."]},
+    {title:"Emotional Regulation",q:"Can you stay grounded during difficult conversations with this person, or do your emotions take over the interaction?",labels:["Emotion Leads the Room — Frustration, defensiveness, anxiety, or impatience shapes the conversation.","Pulled Off Center — You stay composed sometimes, but pressure still affects your tone, patience, or judgment.","Steady Under Pressure — You usually remain grounded enough to lead the conversation productively.","Executive Composure — You stay clear, calm, firm, and fair even when the conversation is uncomfortable."]},
+    {title:"Listening Acuity",q:"Can you accurately repeat what this person meant, needed, or was asking for — before responding or redirecting?",labels:["Answering Too Fast — You often respond before fully understanding what they meant, needed, or feared.","Partial Signal Received — You hear the main point but may miss the underlying concern, need, or context.","Meaning Mostly Captured — You can usually reflect back what they meant before redirecting or deciding.","Precision Listening — They feel understood because you listen for facts, meaning, emotion, and operational need."]},
+    {title:"Directional Alignment",q:"Does this person clearly understand the direction you are building toward — and are they genuinely committed to that path?",labels:["Misaligned Motion — They are working, but not clearly moving in the direction you need.","Partial Buy-In — They understand some of the direction, but commitment or clarity is inconsistent.","Mostly Aligned — They understand the path and usually make decisions that support it.","Locked-In Trajectory — They understand the mission, believe in the direction, and move with ownership."]},
+    {title:"Decision Clarity",q:"Can the two of you resolve ambiguity, competing priorities, or disagreements without delay, confusion, or unspoken resentment?",labels:["Decision Fog — Ambiguity turns into delay, confusion, second-guessing, or silent frustration.","Slow Resolution — Decisions get made, but the process takes too much energy or creates avoidable tension.","Functional Clarity — You can usually resolve priorities, disagreements, and next steps with reasonable speed.","Clean Decision Channel — Ambiguity gets converted into clear decisions, ownership, and next action without emotional residue."]},
+    {title:"Communication Impact",q:"When you give this person direction, feedback, or a standard to meet, how often do they receive and act on what you actually intended?",labels:["Message Not Landing — Direction or feedback often gets misunderstood, ignored, resisted, or poorly executed.","Inconsistent Translation — They understand some of what you mean, but too much gets lost between conversation and action.","Usually Converts — Your communication usually turns into the action, correction, or standard you intended.","High-Fidelity Execution — What you say is accurately received, understood, and converted into aligned behavior."]},
+    {title:"Execution Rate",q:"Do your conversations with this person convert into reliable, completed action — or do things get agreed to and then quietly not happen?",labels:["Agreement Theater — Conversations sound productive, but follow-through is weak or inconsistent.","Leaky Execution — Some things get done, but too many commitments require reminders, rescue, or rework.","Reliable Follow-Through — Most agreements become completed action with reasonable consistency.","Execution Machine — Conversations turn into ownership, action, completion, and visible progress without babysitting."]}
+  ],
+  managed:[
+    {title:"Authentic Transparency",q:"Can you be fully honest with this person about challenges, mistakes, and concerns — or do you manage what they see of you?",labels:["Managed Image: You carefully filter what they see because full honesty feels politically, emotionally, or professionally unsafe.","Selective Honesty: You can be honest in some areas, but you still hold back when the stakes feel high.","Mostly Candid: You can usually speak truthfully about challenges, concerns, and mistakes without over-managing the interaction.","Clean Professional Candor: You can bring truth, context, risk, and concern clearly without fear, performance, or unnecessary self-protection."]},
+    {title:"Relationship Reciprocity",q:"Does this person invest in your growth and advancement as much as you invest in their priorities and success?",labels:["One-Way Loyalty: You invest heavily in their success, but your growth receives little attention in return.","Uneven Investment: They support you occasionally, but your advancement is not consistently prioritized.","Mutual Professional Value: You help them win, and they generally support your growth, visibility, and development.","Sponsorship-Level Reciprocity: They actively invest in your advancement, not just your usefulness."]},
+    {title:"Presence Quality",q:"How much real, focused access and attention does this person actually give you — versus rushed, reactive, or transactional contact?",labels:["Transactional Access Only: Most contact is rushed, reactive, or task-based, with little meaningful attention.","Limited Strategic Attention: You get some access, but it is inconsistent, distracted, or mostly problem-driven.","Useful Access: They regularly give you enough focused time to clarify expectations, direction, and development.","High-Value Access: Their attention sharpens your judgment, expands your perspective, and helps you operate at a higher level."]},
+    {title:"Behavioral Trust",q:"Can this person trust your execution and judgment without needing to monitor you, follow up, or verify your work?",labels:["Under the Microscope: They feel the need to monitor, verify, or control too much of your work.","Conditional Trust: They trust you in some areas, but still follow up heavily when the stakes rise.","Trusted Operator: They generally trust your judgment, execution, and ability to deliver without constant oversight.","Autonomous Confidence: They trust you with important work because your judgment, ownership, and execution are proven."]},
+    {title:"Recovery Speed",q:"When expectations are missed or tension surfaces, how quickly does the relationship return to open, productive footing?",labels:["Lingering Tension: Missed expectations create distance, guardedness, blame, or unresolved friction.","Slow Reset: The relationship eventually returns to normal, but the recovery takes too much time or energy.","Productive Repair: Tension is usually addressed and the relationship returns to useful footing.","Fast Professional Reset: Issues are clarified, expectations are reset, and both sides move forward without residue."]},
+    {title:"Emotional Regulation",q:"Can you stay grounded in interactions with this person, or does the power dynamic cause you to react, shrink, or overcompensate?",labels:["Power Dynamic Hijack: Their position causes you to shrink, perform, defend, over-explain, or react emotionally.","Pulled Off Center: You can stay grounded sometimes, but pressure from the dynamic still affects your presence.","Steady Professional Presence: You usually remain composed, clear, and respectful even when the interaction is uncomfortable.","Executive-Level Composure: You stay grounded, direct, calm, and self-possessed regardless of title, pressure, or stakes."]},
+    {title:"Listening Acuity",q:"Can you accurately reflect back what this person said, meant, or expected — before assuming, reacting, or filling in the gaps yourself?",labels:["Assumption Mode: You often act on your interpretation before confirming what they actually meant or expected.","Partial Signal: You catch the main message, but miss some context, priority, or unspoken expectation.","Clear Readback: You can usually reflect back what they meant, needed, and expected before taking action.","Precision Understanding: You listen for words, intent, priority, risk, and expectation with high accuracy."]},
+    {title:"Directional Alignment",q:"Are you and this person aligned on where your role, your growth, and your future in this relationship are actually headed?",labels:["Unclear Future: You do not have a shared understanding of where the role, relationship, or growth path is going.","Loose Alignment: There is some general agreement, but the path forward is vague, inconsistent, or assumed.","Shared Direction: You are mostly aligned on expectations, growth, and where the relationship is headed.","Locked-In Growth Path: Role expectations, advancement, development, and future opportunity are clearly aligned."]},
+    {title:"Decision Clarity",q:"Can the two of you reach clarity on direction, priorities, and expectations without confusion, delay, or political maneuvering?",labels:["Political Fog: Decisions are unclear, delayed, or shaped by guesswork, hidden agendas, or shifting expectations.","Slow Clarity: Direction eventually becomes clear, but only after unnecessary back-and-forth or uncertainty.","Functional Clarity: You can usually clarify priorities, expectations, and next steps without major friction.","Clean Priority Channel: Direction, priorities, ownership, and expectations become clear quickly and without politics."]},
+    {title:"Communication Impact",q:"When you bring ideas, solutions, or concerns to this person, how often do they actually register, consider, and act on what you have shared?",labels:["Unheard Contribution: Your ideas, concerns, or solutions often get dismissed, ignored, or forgotten.","Inconsistent Reception: Some input lands, but too much gets delayed, minimized, or left without response.","Valued Input: Your ideas and concerns are usually heard, considered, and sometimes acted upon.","Influence With Impact: Your communication shapes decisions, improves outcomes, and creates visible movement."]},
+    {title:"Execution Rate",q:"Do conversations about your development, expectations, or commitments result in actual follow-through — or do they dissolve after the meeting?",labels:["Meeting Vapor: Promises, expectations, or development conversations disappear after the meeting ends.","Inconsistent Follow-Through: Some commitments move forward, but too many require reminders or get lost.","Reliable Movement: Conversations usually lead to real action, clarified expectations, or measurable progress.","Development Converts to Reality: What gets discussed becomes follow-through, opportunity, accountability, and visible growth."]}
+  ]
+};
+
+const COMMON=[
+  {pillar:"Wealth",title:"Leadership Leverage",q:"If you disappeared from your job or business for 30 days, how much would your absence affect performance, revenue, or execution?",labels:["Minimal Impact: Your absence would barely be noticed, and the work would continue without major disruption.","Short-Term Friction: The first week would be difficult, but the team would eventually adjust.","Noticeable Disruption: Your absence would clearly affect output, decisions, momentum, or revenue.","Major Consequence: Your absence would create serious operational or financial strain because you are a key source of leverage."]},
+  {pillar:"Wealth",title:"Value Visibility",q:"Who already understands the value you create — inside your organization, your industry, or your market?",labels:["Low Visibility: Few, if any, influential people clearly understand the value you create.","Department-Level Visibility: Your immediate team or department sees you as competent, but your reputation is still contained.","Company-Level Visibility: Leadership recognizes you as a serious contributor, and your value is becoming harder to ignore.","Market-Level Visibility: Your company, competitors, and key people in your industry know you create meaningful value."]},
+  {pillar:"Wealth",title:"Multiplier/Divider Ratio",q:"Are the people directly connected to your work multiplying your effectiveness — or consuming more energy than they produce?",labels:["Leverage Drain: Your team or circle creates more friction than forward motion.","Uneven Leverage: A few strong performers carry too much of the load while others slow the system down.","Reliable Leverage: You have competent, loyal people around you who help you execute consistently.","Elite Leverage: You are surrounded by high-standard people who sharpen your thinking, increase your output, and raise your ceiling."]},
+  {pillar:"Wealth",title:"Economic Optionality",q:"If your current role, firm, or business disappeared tomorrow, how many real and ready career or income moves would you have?",labels:["Low Optionality: Your options feel limited, outdated, or fragile — like selling Yellow Pages in the age of AI.","Unprepared Optionality: You have possibilities, but nothing ready enough to activate without stress and scrambling.","Practical Optionality: You have transferable skills, useful relationships, and several realistic paths you could activate quickly.","High Optionality: Your skills, reputation, relationships, and income paths are strong enough that losing one role would not destroy your momentum."]},
+  {pillar:"Identity",title:"Session-Identity Proof",q:"When you look at what you actually did last week — not what you intended, planned, or said — what was the real gap between forecast and actual?",labels:["Big talk, weak receipts. Your week looked nothing like the person you claim you are becoming.","Some alignment, but inconsistent. You had a few strong sessions, but your actual behavior still drifted from your stated identity.","Mostly aligned. Your actions, work blocks, conversations, and choices showed real proof of the identity you are building.","Receipts match the resume. Your calendar, actions, and completed sessions make your identity obvious without explanation."]},
+  {pillar:"Identity",title:"OS Currency",q:"Cognitively, you have evolved because of more experience. However, how much of what you think, tolerate, avoid, and repeat is still running on the version of you that existed three years ago?",labels:["Old OS still running the show. Your patterns, fears, tolerances, and reactions are mostly inherited from an older version of you.","Some updates installed. You have changed mentally, but under pressure you still default to old habits and old standards.","Mostly upgraded. Your decisions, boundaries, and daily patterns reflect a newer version of you more often than not.","Current version fully active. Your thoughts, standards, tolerances, and repeated behaviors match who you are becoming now — not who you used to be."]},
+  {pillar:"Identity",title:"Installation Rate",q:"Of the sessions you repeat most — your work blocks, your conversations, your health choices, your decisions under pressure — how many of them are optimized so you can set it and forget it for the next 5 years?",labels:["Nothing is installed. Most of your life still runs manually, emotionally, and inconsistently.","A few systems exist. Some routines work, but too many important sessions still depend on mood, memory, or motivation.","Core sessions are installed. Your most important work, health, decision, and relationship patterns have repeatable structure.","The machine is running. Your key sessions are so well-designed that they compound with minimal friction for years."]},
+  {pillar:"Identity",title:"Identity Integration",q:"Does the version of you that shows up in your health, your wealth, and your relationships operate from the same even standards — or does one or more play bully to other areas of your life?",labels:["One area is bullying the rest. Wealth, health, or relationships dominates your life while the others pay the price.","Uneven identity. You show discipline in one area, but inconsistency or avoidance in another.","Mostly integrated. Your standards are becoming more even across health, wealth, and relationships.","One identity, three arenas. The same mature version of you shows up across your body, money, and relationships."]},
+  {pillar:"Identity",title:"Identity Velocity",q:"Compared to who you were 12 months ago — in your standards, your defaults, your tolerances, and your decisions under pressure — how measurably different is the person showing up today?",labels:["Same person, new calendar year. Your life changed more in circumstance than in identity.","Small shifts, weak momentum. You can see some growth, but your defaults still look too familiar.","Clear upgrade. Your standards, decisions, and tolerances are noticeably stronger than they were 12 months ago.","Unrecognizable trajectory. The person showing up today makes different decisions so consistently that your old self would barely recognize the operating system."]},
+  {pillar:"Health",title:"Physical Capacity",q:"If your current sleep, nutrition, exercise, stress load, and recovery habits became your permanent operating system, what version of your physical self would be available to receive the wealth, lead the relationships, and execute the life your next five years demand?",labels:["Physical Liability: Your current habits are building a body that may eventually resist the future you are trying to create.","Functional but Exposed: You can perform today, but your energy, recovery, and resilience are too inconsistent for sustained higher-level execution.","Strong Enough to Scale: Your body mostly supports your ambition, but a few weak points still limit your consistency, stamina, or presence.","High-Performance Asset: Your body is becoming a disciplined, reliable vessel for wealth, leadership, intimacy, and long-term execution."]}
+];
+
+const PS={
+  Relationships:{accent:"#1D9E75",bg:"#E1F5EE",text:"#085041"},
+  Wealth:{accent:"#BA7517",bg:"#FAEEDA",text:"#633806"},
+  Identity:{accent:"#7F77DD",bg:"#EEEDFE",text:"#3C3489"},
+  Health:{accent:"#D4537E",bg:"#FBEAF0",text:"#72243E"}
+};
+const RANGES={Relationships:[0,10],Wealth:[11,14],Identity:[15,19],Health:[20,20]};
+const TRANSITIONS=new Set([11,15,20]);
+const TDESC={
+  Wealth:"How you generate, protect, and multiply value in your career or business.",
+  Identity:"The operating system beneath everything — what your repeated sessions are making you become.",
+  Health:"The physical vehicle that carries everything you are building."
+};
+
+function lbl(v){if(v<=3)return"Critical gap";if(v<=6)return"Moderate";if(v<=9)return"Strong";return"Fully optimized";}
+function scoreFor(ans,pillar){const[s,e]=RANGES[pillar];const sl=ans.slice(s,e+1);const valid=sl.filter(v=>v!==null);if(!valid.length)return 0;return Math.round((valid.reduce((a,b)=>a+SCORES[b],0)/valid.length)*10)/10;}
+function splitLbl(text){
+  const ei=text.indexOf(" — ");if(ei>0&&ei<35)return{head:text.slice(0,ei),body:text.slice(ei+3)};
+  const ci=text.indexOf(": ");if(ci>0&&ci<35)return{head:text.slice(0,ci),body:text.slice(ci+2)};
+  const pi=text.indexOf(". ");if(pi>0)return{head:text.slice(0,pi+1),body:text.slice(pi+2)};
+  return{head:text,body:""};
+}
+
+let phase="intro",idx=0,answers=Array(21).fill(null),pendingT=null,variant=null,QA=[],firstName="";
+function buildQA(){QA=REL[variant].map(q=>({...q,pillar:"Relationships"})).concat(COMMON);}
+function r(){render();}
+
+function render(){
+  const root=document.getElementById("root");
+  if(phase==="intro"){root.innerHTML=introH();return;}
+  if(phase==="rel-brief"){root.innerHTML=relH();return;}
+  if(phase==="transition"){root.innerHTML=transH();return;}
+  if(phase==="results"){root.innerHTML=resultsH();return;}
+  if(phase==="confirmed"){root.innerHTML=confirmedH();return;}
+  root.innerHTML=questionH();
+}
+
+function selectV(v){
+  variant=v;
+  ["partner","report","managed"].forEach(opt=>{
+    const el=document.getElementById("vp-"+opt);if(!el)return;
+    if(opt===v){el.style.border="2px solid #1D9E75";el.style.opacity="1";el.style.background="#E1F5EE";el.style.color="#085041";}
+    else{el.style.border="0.5px solid rgba(8,8,8,0.15)";el.style.opacity="0.5";el.style.background="rgba(255,255,255,0.8)";el.style.color="#080808";}
+  });
+  const desc=document.getElementById("vdesc");if(desc){desc.textContent=VDESCS[v];desc.style.opacity="1";}
+  const btn=document.getElementById("rel-cta");if(btn){btn.style.opacity="1";btn.style.cursor="pointer";}
+}
+
+function selectOpt(opt){
+  const a=[...answers];a[idx]=opt;answers=a;
+  const q=QA[idx],p=PS[q.pillar];
+  OPTS.forEach(o=>{
+    const el=document.getElementById("ro-"+o);if(!el)return;
+    const radio=el.querySelector("input[type=radio]");
+    const heads=el.querySelectorAll(".lbl-head");
+    const bodies=el.querySelectorAll(".lbl-body");
+    if(o===opt){
+      el.style.border="2px solid "+p.accent;el.style.background=p.bg;el.style.color=p.text;
+      if(radio)radio.checked=true;
+      heads.forEach(h=>{h.style.color=p.text;});
+      bodies.forEach(b=>{b.style.color=p.text;b.style.opacity="0.9";});
+    }else{
+      el.style.border="0.5px solid rgba(8,8,8,0.15)";el.style.background="rgba(255,255,255,0.8)";el.style.color="#080808";
+      if(radio)radio.checked=false;
+      heads.forEach(h=>{h.style.color="#080808";});
+      bodies.forEach(b=>{b.style.color="rgba(8,8,8,0.65)";b.style.opacity="1";});
+    }
+  });
+  const btn=document.getElementById("next-btn");if(btn){btn.style.opacity="1";btn.style.cursor="pointer";}
+}
+
+function submitForm(){
+  const fn=document.getElementById("inp-name"),em=document.getElementById("inp-email"),err=document.getElementById("form-err");
+  if(!fn||!em)return;
+  const fnv=fn.value.trim(),emv=em.value.trim();
+  if(!fnv||!emv||!emv.includes("@")||!emv.includes(".")){if(err){err.textContent="Please enter your first name and a valid email.";err.style.opacity="1";}return;}
+  firstName=fnv;phase="confirmed";r();
+}
+
+function introH(){return`<div class="wrap" style="text-align:center;padding-top:3rem;padding-bottom:3rem;">
+  <div style="font-size:10px;letter-spacing:4px;color:rgba(8,8,8,0.55);text-transform:uppercase;margin-bottom:2.5rem;">Gap Assessment</div>
+  <div style="margin-bottom:1.5rem;">
+    <span style="font-family:'Barlow Condensed',Impact,sans-serif;font-size:clamp(52px,12vw,120px);font-weight:900;color:#080808;letter-spacing:-2px;display:block;line-height:0.9;">5 Years</span>
+    <span style="font-family:'Barlow Condensed',Impact,sans-serif;font-size:clamp(52px,12vw,120px);font-weight:900;color:transparent;-webkit-text-stroke:2px #5C2E00;letter-spacing:-2px;display:block;line-height:0.9;margin-bottom:1rem;">From Here</span>
+  </div>
+  <p style="font-size:14px;line-height:1.85;color:rgba(8,8,8,0.78);max-width:420px;margin:0 auto 1rem;">Measure the gap between where you are and the life your next five years demand.</p>
+  <p style="font-size:12px;line-height:1.9;color:rgba(8,8,8,0.58);max-width:380px;margin:0 auto 2.5rem;">21 questions across four pillars — relationships, wealth, identity, and health.</p>
+  <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-bottom:2.5rem;">
+    <span class="pill" style="background:#E1F5EE;color:#085041;">Relationships</span>
+    <span class="pill" style="background:#FAEEDA;color:#633806;">Wealth</span>
+    <span class="pill" style="background:#EEEDFE;color:#3C3489;">Identity</span>
+    <span class="pill" style="background:#FBEAF0;color:#72243E;">Health</span>
+  </div>
+  <button class="nav-btn" onclick="phase='rel-brief';r();" style="font-size:15px;padding:14px 44px;letter-spacing:2px;">Begin &rarr;</button>
+  <p style="font-size:11px;color:rgba(8,8,8,0.42);margin-top:1rem;letter-spacing:1px;">21 questions &middot; 5&ndash;8 minutes &middot; No email required</p>
+</div>`;}
+
+function relH(){
+  const sel=variant;
+  function vs(v){if(sel===v)return"border:2px solid #1D9E75;opacity:1;background:#E1F5EE;color:#085041;";return"border:0.5px solid rgba(8,8,8,0.15);opacity:"+(sel?"0.5":"0.85")+";background:rgba(255,255,255,0.8);color:#080808;";}
+  return`<div class="wrap" style="padding-top:2.5rem;padding-bottom:3rem;">
+  <div style="margin-bottom:2rem;"><span class="pill" style="background:#E1F5EE;color:#085041;">Relationships</span></div>
+  <div style="border-left:3px solid #1D9E75;padding-left:1.5rem;margin-bottom:2rem;">
+    <p style="font-size:15px;color:#080808;line-height:1.85;">Before this section: Choose one person and keep them in mind for all 11 questions. This section works as three distinct survey variants — a romantic partner or spouse, someone who directly reports to you, or someone you directly report to.</p>
+    <p style="font-size:16px;color:#080808;line-height:1.8;margin-top:1rem;font-weight:700;">One person. One relationship.</p>
+  </div>
+  <p style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:rgba(8,8,8,0.50);margin-bottom:0.75rem;">Select your relationship type</p>
+  <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:1rem;">
+    <button id="vp-partner" class="vpill" onclick="selectV('partner');" style="${vs("partner")}">Partner / Spouse</button>
+    <button id="vp-report" class="vpill" onclick="selectV('report');" style="${vs("report")}">Direct report to me</button>
+    <button id="vp-managed" class="vpill" onclick="selectV('managed');" style="${vs("managed")}">I report to them</button>
+  </div>
+  <p id="vdesc" style="font-size:13px;color:#1D9E75;line-height:1.65;min-height:2.5rem;margin-bottom:2rem;opacity:${sel?1:0};">${sel?VDESCS[sel]:""}</p>
+  <button id="rel-cta" class="nav-btn" onclick="if(variant){buildQA();phase='survey';idx=0;r();}" style="font-size:15px;padding:14px 40px;opacity:${sel?1:0.35};cursor:${sel?"pointer":"not-allowed"};">I have my person in mind &rarr;</button>
+</div>`;}
+
+function transH(){
+  const p=PS[pendingT];
+  return`<div class="wrap" style="text-align:center;padding-top:3rem;padding-bottom:3rem;">
+  <div style="font-size:10px;letter-spacing:4px;color:rgba(8,8,8,0.50);text-transform:uppercase;margin-bottom:2rem;">Next pillar</div>
+  <span class="pill" style="background:${p.bg};color:${p.text};font-size:13px;padding:8px 20px;letter-spacing:3px;display:inline-block;margin-bottom:1.5rem;">${pendingT}</span>
+  <p style="font-size:17px;color:#080808;line-height:1.65;max-width:340px;margin:1rem auto 2.5rem;">${TDESC[pendingT]}</p>
+  <button class="nav-btn" onclick="phase='survey';r();" style="font-size:15px;padding:14px 40px;">Continue &rarr;</button>
+</div>`;}
+
+function questionH(){
+  const q=QA[idx],p=PS[q.pillar];
+  const pct=Math.round((idx/21)*100);
+  const[ps,pe]=RANGES[q.pillar];
+  const sel=answers[idx],hasAns=sel!==null;
+  const hasCustom=!!q.labels,labels=q.labels||OLABELS;
+  const opts=OPTS.map((o,i)=>{
+    const isSel=sel===o,txt=labels[i];
+    let inner="";
+    if(hasCustom){
+      const{head,body}=splitLbl(txt);
+      const hc=isSel?p.text:"#080808";
+      const bc=isSel?p.text:"rgba(8,8,8,0.65)";
+      inner=`<div style="display:flex;flex-direction:column;gap:4px;"><span class="lbl-head" style="font-size:14px;font-weight:700;line-height:1.4;color:${hc};">${head}</span>${body?`<span class="lbl-body" style="font-size:13px;line-height:1.55;color:${bc};">${body}</span>`:""}</div>`;
+    }else{
+      inner=`<span class="lbl-head" style="font-size:16px;font-weight:${isSel?"600":"400"};color:${isSel?p.text:"#080808"};">${txt}</span>`;
+    }
+    return`<label id="ro-${o}" class="ropt" onclick="selectOpt('${o}');" style="align-items:${hasCustom?"flex-start":"center"};border:${isSel?"2px solid "+p.accent:"0.5px solid rgba(8,8,8,0.15)"};background:${isSel?p.bg:"rgba(255,255,255,0.8)"};color:${isSel?p.text:"#080808"};">
+      <input type="radio" name="q${idx}" value="${o}" ${isSel?"checked":""} style="accent-color:${p.accent};${hasCustom?"margin-top:3px;":""}">
+      ${inner}
+    </label>`;
+  }).join("");
+  return`<div class="wrap">
+  <div class="bar-track" style="margin-bottom:1.75rem;"><div class="bar-fill" style="width:${pct}%;background:${p.accent};"></div></div>
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.75rem;">
+    <span class="pill" style="background:${p.bg};color:${p.text};">${q.pillar} &middot; ${idx-ps+1} of ${pe-ps+1}</span>
+    <span style="font-size:13px;color:rgba(8,8,8,0.50);">${idx+1} / 21</span>
+  </div>
+  <div style="margin-bottom:1.5rem;">
+    <div style="font-size:10px;letter-spacing:3px;text-transform:uppercase;color:${p.accent};margin-bottom:0.75rem;">${q.title}</div>
+    <p style="font-size:${hasCustom?"17px":"18px"};color:#080808;line-height:1.55;font-weight:400;">${q.q}</p>
+  </div>
+  <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:2rem;">${opts}</div>
+  <div style="display:flex;gap:12px;justify-content:space-between;">
+    <button class="nav-btn" onclick="goBack();" style="opacity:${idx===0?0.35:1};cursor:${idx===0?"not-allowed":"pointer"};">&larr; Back</button>
+    <button id="next-btn" class="nav-btn" onclick="goNext();" style="opacity:${hasAns?1:0.35};cursor:${hasAns?"pointer":"not-allowed"};">${idx===20?"See my scores &rarr;":"Next &rarr;"}</button>
+  </div>
+</div>`;}
+
+function resultsH(){
+  const rS=scoreFor(answers,"Relationships"),wS=scoreFor(answers,"Wealth"),iS=scoreFor(answers,"Identity"),hS=scoreFor(answers,"Health");
+  const overall=Math.round(((rS*11+wS*4+iS*5+hS)/21)*10)/10;
+  const vname=VNAMES[variant]||"";
+  const pb=(pillar,score)=>{const p=PS[pillar];return`<div style="margin-bottom:1.25rem;"><div style="display:flex;justify-content:space-between;align-items:baseline;"><span style="font-size:14px;font-weight:600;color:#080808;">${pillar}</span><span style="font-size:13px;color:${p.accent};">${score}/10 &middot; ${lbl(score)}</span></div><div class="rb-track"><div class="rb-fill" style="width:${score*10}%;background:${p.accent};"></div></div></div>`;};
+  return`<div class="wrap" style="padding-top:2.5rem;padding-bottom:3rem;">
+  <div style="font-size:10px;letter-spacing:4px;color:rgba(8,8,8,0.50);text-transform:uppercase;margin-bottom:1.5rem;text-align:center;">Your gap scores</div>
+  <div style="text-align:center;margin-bottom:0.75rem;"><div class="big-score">${overall}</div><div style="font-size:14px;color:rgba(8,8,8,0.62);margin-top:8px;">Overall / 10 &middot; ${lbl(overall)}</div></div>
+  <div style="text-align:center;margin-bottom:2rem;"><span class="pill" style="background:#E1F5EE;color:#085041;">Relationship: ${vname}</span></div>
+  <div style="margin-bottom:0.5rem;">${pb("Relationships",rS)}${pb("Wealth",wS)}${pb("Identity",iS)}${pb("Health",hS)}</div>
+  <div class="divider"></div>
+  <div style="margin-bottom:1.5rem;">
+    <div style="font-size:10px;letter-spacing:3px;text-transform:uppercase;color:rgba(8,8,8,0.50);margin-bottom:0.75rem;">What comes next</div>
+    <p style="font-size:16px;font-weight:700;color:#080808;line-height:1.5;margin-bottom:0.75rem;">Your free Gap Discrepancy Audit</p>
+    <p style="font-size:13px;color:rgba(8,8,8,0.72);line-height:1.85;">Your scores show where the gap is. The audit explains the discrepancy between who you say you want to become and what your current sessions are conditioning you to become. Sent to you within 24 hours.</p>
+  </div>
+  <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:0.75rem;">
+    <input id="inp-name" class="field" type="text" placeholder="First name" autocomplete="given-name">
+    <input id="inp-email" class="field" type="email" placeholder="Email address" autocomplete="email">
+  </div>
+  <p id="form-err" style="font-size:13px;color:#D4537E;margin-bottom:0.75rem;opacity:0;min-height:1.2rem;"></p>
+  <button class="nav-btn" onclick="submitForm();" style="width:100%;font-size:14px;padding:15px 24px;margin-bottom:1.25rem;letter-spacing:1.5px;">Send my Gap Discrepancy Audit &rarr;</button>
+  <div class="ibox">
+    <p style="font-size:12px;color:rgba(8,8,8,0.68);line-height:1.85;">Every audit in this phase is manually reviewed — not automated. We are building this system the same way we are asking you to build yourself: deliberately, with real feedback, and with honesty about where we are. Your audit reflects that standard.</p>
+  </div>
+</div>`;}
+
+function confirmedH(){return`<div class="wrap" style="text-align:center;padding-top:3.5rem;padding-bottom:3rem;">
+  <div style="width:52px;height:52px;border-radius:99px;background:#E1F5EE;display:flex;align-items:center;justify-content:center;margin:0 auto 1.5rem;">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1D9E75" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+  </div>
+  <div style="font-size:10px;letter-spacing:4px;color:rgba(8,8,8,0.50);text-transform:uppercase;margin-bottom:1.25rem;">Audit submitted</div>
+  <p style="font-size:20px;font-weight:400;color:#080808;line-height:1.45;max-width:380px;margin:0 auto 1rem;">Your audit is in review${firstName?", "+firstName:""}.</p>
+  <p style="font-size:13px;color:rgba(8,8,8,0.68);line-height:1.85;max-width:400px;margin:0 auto 2rem;">Your Gap Discrepancy Audit will be in your inbox within 24 hours. It will explain the discrepancy between your current operating system and the identity your next five years require.</p>
+  <div class="ibox" style="max-width:420px;margin:0 auto 2rem;text-align:left;">
+    <p style="font-size:12px;color:rgba(8,8,8,0.65);line-height:1.9;">We are in the process of getting better at getting better — and we want you to know that. Every audit is read by a real person before it reaches you. That is not a limitation. It is the standard we are holding while we build toward statistical significance. You will feel the difference.</p>
+  </div>
+  <a href="index.html" style="font-size:12px;color:rgba(8,8,8,0.50);text-decoration:underline;letter-spacing:1px;">Back to home</a>
+</div>`;}
+
+function goNext(){
+  if(!answers[idx])return;
+  if(idx===20){phase="results";r();return;}
+  idx++;
+  if(TRANSITIONS.has(idx)){pendingT=QA[idx].pillar;phase="transition";}
+  else phase="survey";
+  r();
+}
+function goBack(){if(idx===0){phase="rel-brief";r();return;}idx--;phase="survey";r();}
+
+render();
+</script>
+</body>
+</html>
