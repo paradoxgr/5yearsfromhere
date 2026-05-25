@@ -192,12 +192,36 @@ function selectOpt(opt){
   const btn=document.getElementById("next-btn");if(btn){btn.style.opacity="1";btn.style.cursor="pointer";}
 }
 
-function submitForm(){
-  const fn=document.getElementById("inp-name"),em=document.getElementById("inp-email"),err=document.getElementById("form-err");
+async function submitForm(){
+  const fn=document.getElementById("inp-name"),em=document.getElementById("inp-email"),err=document.getElementById("form-err"),btn=document.getElementById("submit-btn");
   if(!fn||!em)return;
   const fnv=fn.value.trim(),emv=em.value.trim();
   if(!fnv||!emv||!emv.includes("@")||!emv.includes(".")){if(err){err.textContent="Please enter your first name and a valid email.";err.style.opacity="1";}return;}
-  firstName=fnv;phase="confirmed";r();
+  if(btn){btn.textContent="Sending...";btn.style.opacity="0.6";btn.disabled=true;}
+  const rS=scoreFor(answers,"Relationships"),wS=scoreFor(answers,"Wealth"),iS=scoreFor(answers,"Identity"),hS=scoreFor(answers,"Health");
+  const overall=Math.round(((rS*11+wS*4+iS*5+hS)/21)*10)/10;
+  const vname=VNAMES[variant]||"";
+  try{
+    const res=await fetch("https://formspree.io/f/xqejddao",{
+      method:"POST",
+      headers:{"Content-Type":"application/json","Accept":"application/json"},
+      body:JSON.stringify({
+        name:fnv,
+        email:emv,
+        relationship_variant:vname,
+        relationships_score:rS+"/10 — "+lbl(rS),
+        wealth_score:wS+"/10 — "+lbl(wS),
+        identity_score:iS+"/10 — "+lbl(iS),
+        health_score:hS+"/10 — "+lbl(hS),
+        overall_score:overall+"/10 — "+lbl(overall)
+      })
+    });
+    if(res.ok){firstName=fnv;phase="confirmed";r();}
+    else{if(err){err.textContent="Something went wrong. Please try again.";err.style.opacity="1";}if(btn){btn.textContent="Send my Gap Discrepancy Audit \u2192";btn.style.opacity="1";btn.disabled=false;}}
+  }catch(e){
+    if(err){err.textContent="Connection error. Please try again.";err.style.opacity="1";}
+    if(btn){btn.textContent="Send my Gap Discrepancy Audit \u2192";btn.style.opacity="1";btn.disabled=false;}
+  }
 }
 
 function introH(){return`<div class="wrap" style="text-align:center;padding-top:3rem;padding-bottom:3rem;">
@@ -306,7 +330,7 @@ function resultsH(){
     <input id="inp-email" class="field" type="email" placeholder="Email address" autocomplete="email">
   </div>
   <p id="form-err" style="font-size:13px;color:#D4537E;margin-bottom:0.75rem;opacity:0;min-height:1.2rem;"></p>
-  <button class="nav-btn" onclick="submitForm();" style="width:100%;font-size:14px;padding:15px 24px;margin-bottom:1.25rem;letter-spacing:1.5px;">Send my Gap Discrepancy Audit &rarr;</button>
+  <button id="submit-btn" class="nav-btn" onclick="submitForm();" style="width:100%;font-size:14px;padding:15px 24px;margin-bottom:1.25rem;letter-spacing:1.5px;">Send my Gap Discrepancy Audit &rarr;</button>
   <div class="ibox">
     <p style="font-size:12px;color:rgba(8,8,8,0.68);line-height:1.85;">Every audit in this phase is manually reviewed — not automated. We are building this system the same way we are asking you to build yourself: deliberately, with real feedback, and with honesty about where we are. Your audit reflects that standard.</p>
   </div>
