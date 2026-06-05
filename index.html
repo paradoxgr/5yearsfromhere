@@ -3,239 +3,856 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>5 Years From Here — Identity Gap Assessment</title>
+<title>Five-Year Alignment Assessment | 5 Years From Here</title>
+<meta name="description" content="Measure the alignment between your current patterns and the life you intend to build. Audit the health, wealth, relationships, and identity architecture shaping your next five years.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800;900&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
-*{box-sizing:border-box;margin:0;padding:0;}
-html,body{font-family:'Space Mono',monospace;color:#080808;overflow-x:hidden;}
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-.bg{
-  background-image:
-    linear-gradient(rgba(255,255,255,0.07) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255,255,255,0.07) 1px, transparent 1px),
-    linear-gradient(rgba(255,255,255,0.46),rgba(255,255,255,0.38) 50%,rgba(255,255,255,0.44)),
-    linear-gradient(180deg,
-      #3D1E68 0%,#6B2080 10%,#A82878 22%,#D03080 34%,
-      #E84895 44%,#F070B0 52%,#FFE0F0 60%,#F090C8 66%,
-      #D04898 74%,#8A2878 83%,#4A1E70 91%,#3A1860 100%);
-  background-size:68px 68px,68px 68px,100% 100%,100% 100%;
-  min-height:100vh;
-}
+  :root {
+    --plum: #1a0828;
+    --deep: #0e0118;
+    --mag: #c026d3;
+    --mag-light: #e879f9;
+    --mag-dim: rgba(192,38,211,0.18);
+    --mag-glow: rgba(232,121,249,0.08);
+    --off-white: #f5f0f7;
+    --muted: rgba(245,240,247,0.55);
+    --border: rgba(232,121,249,0.15);
+    --font-display: 'Cormorant Garamond', Georgia, serif;
+    --font-body: 'DM Sans', sans-serif;
+  }
 
-.section{max-width:960px;margin:0 auto;padding:6rem 2.5rem;}
-.section-border{border-top:0.5px solid rgba(8,8,8,0.14);}
+  html { scroll-behavior: smooth; }
 
-.hero{
-  min-height:100vh;display:flex;flex-direction:column;
-  justify-content:center;align-items:center;
-  text-align:center;padding:5rem 2.5rem;position:relative;
-}
-.corner{position:absolute;width:22px;height:22px;}
-.tl{top:28px;left:28px;border-top:1.5px solid rgba(8,8,8,0.35);border-left:1.5px solid rgba(8,8,8,0.35);}
-.tr{top:28px;right:28px;border-top:1.5px solid rgba(8,8,8,0.35);border-right:1.5px solid rgba(8,8,8,0.35);}
-.bl{bottom:28px;left:28px;border-bottom:1.5px solid rgba(8,8,8,0.35);border-left:1.5px solid rgba(8,8,8,0.35);}
-.br{bottom:28px;right:28px;border-bottom:1.5px solid rgba(8,8,8,0.35);border-right:1.5px solid rgba(8,8,8,0.35);}
+  body {
+    background: var(--deep);
+    color: var(--off-white);
+    font-family: var(--font-body);
+    font-size: 16px;
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
 
-.badge{
-  display:inline-flex;align-items:center;gap:10px;
-  font-size:10px;letter-spacing:3.5px;text-transform:uppercase;
-  color:rgba(8,8,8,0.75);border:0.5px solid rgba(8,8,8,0.25);
-  padding:10px 20px;margin-bottom:3rem;background:rgba(255,255,255,0.2);
-}
-.dot{width:6px;height:6px;background:#7A3A00;border-radius:50%;animation:blink 2s ease-in-out infinite;flex-shrink:0;}
-@keyframes blink{0%,100%{opacity:1;}50%{opacity:0.2;}}
+  .page { max-width: 960px; margin: 0 auto; padding: 0 2rem; }
 
-.h1{
-  font-family:'Barlow Condensed',Impact,'Arial Narrow',sans-serif;
-  font-size:clamp(72px,15vw,196px);font-weight:900;
-  line-height:0.87;letter-spacing:-3px;text-transform:uppercase;
-  color:#080808;display:block;
-}
-.h1-out{
-  font-family:'Barlow Condensed',Impact,'Arial Narrow',sans-serif;
-  font-size:clamp(72px,15vw,196px);font-weight:900;
-  line-height:0.87;letter-spacing:-3px;text-transform:uppercase;
-  color:transparent;-webkit-text-stroke:2.5px #5C2E00;
-  display:block;margin-bottom:3rem;
-}
+  /* NAV */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    padding: 1.25rem 2.5rem;
+    display: flex; justify-content: space-between; align-items: center;
+    background: rgba(14,1,24,0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 0.5px solid var(--border);
+  }
+  .nav-brand {
+    font-family: var(--font-body);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--muted);
+    text-decoration: none;
+  }
+  .nav-links {
+    display: flex; align-items: center; gap: 2rem;
+  }
+  .nav-link {
+    font-family: var(--font-body);
+    font-size: 11px;
+    font-weight: 400;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .nav-link:hover { color: var(--off-white); }
+  .nav-cta {
+    font-family: var(--font-body);
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--mag-light);
+    text-decoration: none;
+    border: 0.5px solid rgba(232,121,249,0.4);
+    padding: 0.45rem 1.1rem;
+    transition: background 0.2s;
+  }
+  .nav-cta:hover { background: var(--mag-dim); }
 
-.hero-lead{font-size:15px;line-height:1.9;color:rgba(8,8,8,0.88);max-width:560px;margin-bottom:0.75rem;}
-.hero-sub{font-size:12px;line-height:2.1;color:rgba(8,8,8,0.75);max-width:460px;margin-bottom:3rem;}
+  /* HERO */
+  .hero {
+    min-height: 100vh;
+    display: flex; flex-direction: column; justify-content: center;
+    padding: 8rem 0 5rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-bg {
+    position: absolute; inset: 0; z-index: 0;
+    background:
+      radial-gradient(ellipse 60% 50% at 80% 20%, rgba(192,38,211,0.12) 0%, transparent 70%),
+      radial-gradient(ellipse 40% 60% at 10% 80%, rgba(139,0,164,0.08) 0%, transparent 60%);
+  }
+  .hero-tag {
+    font-family: var(--font-body);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--mag-light);
+    margin-bottom: 2.5rem;
+    opacity: 0; transform: translateY(16px);
+    animation: fadeUp 0.7s 0.1s forwards;
+    position: relative; z-index: 1;
+  }
+  .hero-headline {
+    font-family: var(--font-display);
+    font-weight: 300;
+    font-size: clamp(3.2rem, 7vw, 6.2rem);
+    line-height: 1.05;
+    letter-spacing: -0.01em;
+    color: var(--off-white);
+    margin-bottom: 1.5rem;
+    opacity: 0; transform: translateY(20px);
+    animation: fadeUp 0.8s 0.25s forwards;
+    position: relative; z-index: 1;
+  }
+  .hero-headline em {
+    font-style: italic;
+    background: linear-gradient(135deg, #e879f9, #c026d3);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .hero-sub {
+    font-family: var(--font-display);
+    font-size: clamp(1.25rem, 2.5vw, 1.65rem);
+    font-weight: 300;
+    font-style: italic;
+    color: var(--muted);
+    line-height: 1.5;
+    max-width: 640px;
+    margin-bottom: 3.5rem;
+    opacity: 0; transform: translateY(16px);
+    animation: fadeUp 0.8s 0.4s forwards;
+    position: relative; z-index: 1;
+  }
+  .hero-cta-group {
+    display: flex; align-items: center; gap: 2rem; flex-wrap: wrap;
+    opacity: 0; transform: translateY(16px);
+    animation: fadeUp 0.8s 0.55s forwards;
+    position: relative; z-index: 1;
+  }
+  .btn-primary {
+    display: inline-block;
+    font-family: var(--font-body);
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--deep);
+    background: linear-gradient(135deg, #e879f9, #c026d3);
+    padding: 0.9rem 2.2rem;
+    text-decoration: none;
+    transition: opacity 0.2s, transform 0.2s;
+  }
+  .btn-primary:hover { opacity: 0.88; transform: translateY(-1px); }
+  .btn-meta {
+    font-size: 12px;
+    color: var(--muted);
+    letter-spacing: 0.04em;
+  }
+  .hero-scroll-indicator {
+    position: absolute; bottom: 2.5rem; left: 50%; transform: translateX(-50%);
+    display: flex; flex-direction: column; align-items: center; gap: 6px;
+    opacity: 0; animation: fadeUp 1s 1.2s forwards;
+    z-index: 1;
+  }
+  .scroll-line {
+    width: 0.5px; height: 48px;
+    background: linear-gradient(to bottom, transparent, rgba(232,121,249,0.5));
+    animation: scrollPulse 2s 1.5s infinite;
+  }
 
-.btn{
-  font-family:'Space Mono',monospace;font-size:11px;
-  letter-spacing:3px;text-transform:uppercase;color:#080808;
-  border:1.5px solid rgba(8,8,8,0.55);background:rgba(255,255,255,0.22);
-  padding:18px 52px;cursor:pointer;text-decoration:none;
-  display:inline-block;transition:background 0.2s;
-}
-.btn:hover{background:rgba(8,8,8,0.07);}
+  /* TENSION */
+  .tension {
+    padding: 8rem 0;
+    border-top: 0.5px solid var(--border);
+  }
+  .section-label {
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--mag-light);
+    margin-bottom: 3rem;
+    opacity: 0.7;
+  }
+  .tension-statement {
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 4.5vw, 3.5rem);
+    font-weight: 300;
+    line-height: 1.2;
+    color: var(--off-white);
+    max-width: 760px;
+    margin-bottom: 4rem;
+  }
+  .tension-statement strong {
+    font-weight: 400;
+    font-style: italic;
+    color: var(--mag-light);
+  }
+  .tension-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    border: 0.5px solid var(--border);
+    margin-top: 3rem;
+  }
+  .tension-item {
+    padding: 2.5rem;
+    border-right: 0.5px solid var(--border);
+    border-bottom: 0.5px solid var(--border);
+    transition: background 0.3s;
+  }
+  .tension-item:hover { background: var(--mag-glow); }
+  .tension-item:nth-child(even) { border-right: none; }
+  .tension-item:nth-child(3),
+  .tension-item:nth-child(4) { border-bottom: none; }
+  .tension-num {
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    color: var(--mag-light);
+    opacity: 0.6;
+    margin-bottom: 1rem;
+    font-family: var(--font-body);
+  }
+  .tension-title {
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    font-weight: 400;
+    color: var(--off-white);
+    margin-bottom: 0.75rem;
+    line-height: 1.2;
+  }
+  .tension-body {
+    font-size: 14px;
+    color: var(--muted);
+    line-height: 1.75;
+  }
 
-.lbl{font-size:10px;letter-spacing:4px;text-transform:uppercase;color:rgba(8,8,8,0.60);text-align:center;display:block;margin-bottom:2rem;}
+  /* PILLARS */
+  .pillars {
+    padding: 8rem 0;
+    border-top: 0.5px solid var(--border);
+  }
+  .pillars-intro {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    margin-bottom: 6rem;
+    align-items: end;
+  }
+  .pillars-headline {
+    font-family: var(--font-display);
+    font-size: clamp(2.2rem, 5vw, 4rem);
+    font-weight: 300;
+    line-height: 1.1;
+    color: var(--off-white);
+  }
+  .pillars-headline em { font-style: italic; color: var(--mag-light); }
+  .pillars-desc {
+    font-size: 15px;
+    color: var(--muted);
+    line-height: 1.75;
+  }
+  .pillar-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 0;
+    border-top: 0.5px solid var(--border);
+  }
+  .pillar-card {
+    padding: 3rem 2rem;
+    border-right: 0.5px solid var(--border);
+    border-bottom: 0.5px solid var(--border);
+    transition: background 0.3s;
+  }
+  .pillar-card:last-child { border-right: none; }
+  .pillar-card:hover { background: var(--mag-glow); }
+  .pillar-number {
+    font-size: 10px;
+    letter-spacing: 0.25em;
+    color: var(--mag-light);
+    opacity: 0.6;
+    margin-bottom: 2rem;
+    font-family: var(--font-body);
+  }
+  .pillar-name {
+    font-family: var(--font-display);
+    font-size: 2rem;
+    font-weight: 300;
+    color: var(--off-white);
+    margin-bottom: 0.5rem;
+  }
+  .pillar-sub {
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--mag-light);
+    opacity: 0.7;
+    margin-bottom: 1.5rem;
+    font-family: var(--font-body);
+  }
+  .pillar-body {
+    font-size: 14px;
+    color: var(--muted);
+    line-height: 1.75;
+  }
+  .identity-anchor {
+    border: 0.5px solid var(--border);
+    border-top: 1.5px solid rgba(232,121,249,0.4);
+    padding: 4rem;
+    background: linear-gradient(135deg, rgba(192,38,211,0.06) 0%, rgba(139,0,164,0.03) 100%);
+    position: relative;
+    overflow: hidden;
+  }
+  .identity-anchor::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 1.5px;
+    background: linear-gradient(90deg, transparent, var(--mag-light), transparent);
+  }
+  .anchor-label {
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--mag-light);
+    margin-bottom: 1.5rem;
+    font-family: var(--font-body);
+  }
+  .anchor-headline {
+    font-family: var(--font-display);
+    font-size: clamp(1.8rem, 3.5vw, 2.8rem);
+    font-weight: 300;
+    line-height: 1.2;
+    color: var(--off-white);
+    max-width: 640px;
+    margin-bottom: 1.5rem;
+  }
+  .anchor-headline em { font-style: italic; color: var(--mag-light); }
+  .anchor-body {
+    font-size: 15px;
+    color: var(--muted);
+    line-height: 1.8;
+    max-width: 600px;
+  }
 
-.sec-head{
-  font-family:'Barlow Condensed',Impact,sans-serif;
-  font-size:clamp(40px,6vw,82px);font-weight:900;
-  text-transform:uppercase;color:#080808;text-align:center;
-  line-height:0.93;letter-spacing:-1.5px;margin-bottom:1.75rem;
-}
-.sec-body{font-size:12px;line-height:2.1;color:rgba(8,8,8,0.82);text-align:center;max-width:580px;margin:0 auto 4rem;}
+  /* LOOP */
+  .loop-section {
+    padding: 8rem 0;
+    border-top: 0.5px solid var(--border);
+    text-align: center;
+  }
+  .loop-question {
+    font-family: var(--font-display);
+    font-size: clamp(1.5rem, 3vw, 2.5rem);
+    font-weight: 300;
+    font-style: italic;
+    color: var(--muted);
+    margin-bottom: 4rem;
+    max-width: 560px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .loop-diagram {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0;
+    margin-bottom: 5rem;
+  }
+  .loop-node {
+    font-family: var(--font-display);
+    font-size: clamp(0.95rem, 2vw, 1.3rem);
+    font-weight: 400;
+    color: var(--off-white);
+    padding: 0.6rem 1.2rem;
+    border: 0.5px solid var(--border);
+    white-space: nowrap;
+  }
+  .loop-arrow {
+    color: var(--mag-light);
+    opacity: 0.5;
+    font-size: 1.1rem;
+    padding: 0 0.3rem;
+    font-family: var(--font-body);
+  }
+  .loop-node.identity-node {
+    border-color: rgba(232,121,249,0.5);
+    color: var(--mag-light);
+    background: var(--mag-dim);
+  }
+  .loop-deeper {
+    font-family: var(--font-display);
+    font-size: clamp(1.6rem, 3.5vw, 2.8rem);
+    font-weight: 300;
+    line-height: 1.3;
+    color: var(--off-white);
+    max-width: 660px;
+    margin: 0 auto;
+  }
+  .loop-deeper em { font-style: italic; color: var(--mag-light); }
 
-.pillar-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;}
-.card{border:0.5px solid rgba(8,8,8,0.12);background:rgba(255,255,255,0.35);padding:2rem 1.75rem;}
-.card-num{font-size:9px;letter-spacing:3px;text-transform:uppercase;display:block;margin-bottom:0.6rem;}
-.card-title{font-family:'Barlow Condensed',Impact,sans-serif;font-size:34px;font-weight:900;text-transform:uppercase;color:#080808;display:block;line-height:1;margin-bottom:0.75rem;}
-.card-desc{font-size:11px;line-height:1.85;color:rgba(8,8,8,0.82);}
+  /* INHERITANCE */
+  .inheritance {
+    padding: 8rem 0;
+    border-top: 0.5px solid var(--border);
+  }
+  .inheritance-inner {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6rem;
+    align-items: center;
+  }
+  .inherit-overline {
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--mag-light);
+    opacity: 0.7;
+    margin-bottom: 2rem;
+    font-family: var(--font-body);
+  }
+  .inherit-headline {
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 4vw, 3.2rem);
+    font-weight: 300;
+    line-height: 1.15;
+    color: var(--off-white);
+    margin-bottom: 2rem;
+  }
+  .inherit-headline em { font-style: italic; color: var(--mag-light); }
+  .inherit-body {
+    font-size: 15px;
+    color: var(--muted);
+    line-height: 1.8;
+    margin-bottom: 1.5rem;
+  }
+  .stat-line {
+    border-top: 0.5px solid var(--border);
+    padding: 1.5rem 0;
+    display: grid;
+    grid-template-columns: 90px 1fr;
+    gap: 1.5rem;
+    align-items: center;
+  }
+  .stat-line:last-child { border-bottom: 0.5px solid var(--border); }
+  .stat-val {
+    font-family: var(--font-display);
+    font-size: 2.5rem;
+    font-weight: 300;
+    color: var(--mag-light);
+    line-height: 1;
+  }
+  .stat-desc {
+    font-size: 14px;
+    color: var(--muted);
+    line-height: 1.5;
+  }
 
-.loop{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:10px;margin:3rem auto 2.5rem;max-width:780px;}
-.loop-node{font-size:9px;letter-spacing:3px;text-transform:uppercase;color:rgba(8,8,8,0.78);padding:9px 18px;border:0.5px solid rgba(8,8,8,0.25);background:rgba(255,255,255,0.3);}
-.loop-arr{color:rgba(8,8,8,0.30);font-size:18px;}
-.os-quote{font-size:11px;line-height:2.2;color:rgba(8,8,8,0.65);text-align:center;max-width:500px;margin:0 auto;font-style:italic;}
+  /* ASSESSMENT */
+  .assessment {
+    padding: 8rem 0;
+    border-top: 0.5px solid var(--border);
+  }
+  .assessment-inner {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6rem;
+    align-items: start;
+  }
+  .assess-headline {
+    font-family: var(--font-display);
+    font-size: clamp(2.2rem, 4.5vw, 3.8rem);
+    font-weight: 300;
+    line-height: 1.1;
+    color: var(--off-white);
+    margin-bottom: 1.5rem;
+  }
+  .assess-headline em { font-style: italic; color: var(--mag-light); }
+  .assess-desc {
+    font-size: 15px;
+    color: var(--muted);
+    line-height: 1.8;
+    margin-bottom: 3rem;
+  }
+  .score-table { display: flex; flex-direction: column; }
+  .score-row {
+    display: grid;
+    grid-template-columns: 120px 1fr;
+    gap: 1.5rem;
+    align-items: center;
+    padding: 1.25rem 0;
+    border-top: 0.5px solid var(--border);
+  }
+  .score-row:last-child { border-bottom: 0.5px solid var(--border); }
+  .score-label {
+    font-family: var(--font-display);
+    font-size: 1.1rem;
+    font-weight: 400;
+    color: var(--off-white);
+  }
+  .score-desc {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+  .score-row.overall .score-label { color: var(--mag-light); }
 
-.stat-row{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:rgba(8,8,8,0.12);border:0.5px solid rgba(8,8,8,0.12);margin:3rem 0 4rem;}
-.stat-cell{background:rgba(255,255,255,0.32);padding:2.75rem 1rem;text-align:center;}
-.stat-n{font-family:'Barlow Condensed',Impact,sans-serif;font-size:68px;font-weight:900;color:#080808;display:block;line-height:1;}
-.stat-l{font-size:9px;letter-spacing:3.5px;text-transform:uppercase;color:rgba(8,8,8,0.62);margin-top:8px;display:block;}
+  /* CLOSING */
+  .closing {
+    padding: 10rem 0 8rem;
+    border-top: 0.5px solid var(--border);
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .closing-bg {
+    position: absolute; inset: 0; z-index: 0;
+    background: radial-gradient(ellipse 70% 60% at 50% 100%, rgba(192,38,211,0.1) 0%, transparent 70%);
+  }
+  .closing-eyebrow {
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--mag-light);
+    opacity: 0.7;
+    margin-bottom: 2.5rem;
+    font-family: var(--font-body);
+    position: relative; z-index: 1;
+  }
+  .closing-headline {
+    font-family: var(--font-display);
+    font-size: clamp(3rem, 7vw, 6rem);
+    font-weight: 300;
+    line-height: 1.05;
+    color: var(--off-white);
+    margin-bottom: 2rem;
+    position: relative; z-index: 1;
+  }
+  .closing-headline em { font-style: italic; color: var(--mag-light); }
+  .closing-sub {
+    font-family: var(--font-display);
+    font-size: clamp(1.1rem, 2.2vw, 1.5rem);
+    font-weight: 300;
+    font-style: italic;
+    color: var(--muted);
+    max-width: 540px;
+    margin: 0 auto 4rem;
+    line-height: 1.6;
+    position: relative; z-index: 1;
+  }
+  .closing-cta { position: relative; z-index: 1; margin-bottom: 1.5rem; }
+  .closing-meta {
+    font-size: 12px;
+    color: rgba(245,240,247,0.3);
+    letter-spacing: 0.06em;
+    position: relative; z-index: 1;
+  }
 
-.footer{text-align:center;padding:6rem 2.5rem 8rem;max-width:740px;margin:0 auto;}
-.foot-head{font-family:'Barlow Condensed',Impact,sans-serif;font-size:clamp(36px,5.5vw,76px);font-weight:900;text-transform:uppercase;color:#080808;line-height:0.93;letter-spacing:-1.5px;margin-bottom:2rem;}
-.foot-body{font-size:11px;line-height:2.2;color:rgba(8,8,8,0.82);max-width:560px;margin:0 auto 3rem;}
-.foot-note{font-size:9px;letter-spacing:2.5px;text-transform:uppercase;color:rgba(8,8,8,0.62);margin-top:1.75rem;display:block;}
+  /* FOOTER */
+  footer {
+    border-top: 0.5px solid var(--border);
+    padding: 2.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .footer-brand {
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: rgba(245,240,247,0.3);
+    font-family: var(--font-body);
+    text-decoration: none;
+  }
+  .footer-tagline {
+    font-family: var(--font-display);
+    font-size: 13px;
+    font-style: italic;
+    color: rgba(245,240,247,0.3);
+    max-width: 400px;
+    text-align: right;
+    line-height: 1.5;
+  }
 
-/* ── TABLET ── */
-@media (max-width:768px){
-  .section{padding:4.5rem 1.75rem;}
-  .hero{padding:4rem 1.75rem;min-height:100svh;}
-  .h1,.h1-out{font-size:clamp(64px,18vw,120px);letter-spacing:-2px;}
-  .h1-out{margin-bottom:2.5rem;}
-  .hero-lead{font-size:14px;}
-  .hero-sub{font-size:11px;}
-  .badge{font-size:9px;letter-spacing:3px;padding:9px 16px;margin-bottom:2.5rem;}
-  .sec-head{font-size:clamp(36px,8vw,64px);}
-  .sec-body{font-size:11px;margin-bottom:3rem;}
-  .pillar-grid{grid-template-columns:1fr;}
-  .card{padding:1.5rem 1.25rem;}
-  .stat-n{font-size:52px;}
-  .stat-cell{padding:2rem 0.75rem;}
-  .footer{padding:4.5rem 1.75rem 6rem;}
-  .foot-head{font-size:clamp(32px,8vw,60px);}
-  .foot-body{font-size:11px;}
-  .btn{padding:16px 36px;font-size:10px;letter-spacing:2.5px;}
-}
+  /* REVEAL */
+  .reveal {
+    opacity: 0; transform: translateY(24px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+  .reveal.visible { opacity: 1; transform: none; }
 
-/* ── MOBILE ── */
-@media (max-width:480px){
-  .section{padding:3.5rem 1.25rem;}
-  .hero{padding:3.5rem 1.25rem;}
-  .h1,.h1-out{font-size:clamp(52px,20vw,88px);letter-spacing:-1.5px;}
-  .h1-out{-webkit-text-stroke:2px #5C2E00;margin-bottom:2rem;}
-  .hero-lead{font-size:13px;line-height:1.8;}
-  .hero-sub{font-size:11px;line-height:1.9;}
-  .badge{font-size:8px;letter-spacing:2px;padding:8px 14px;margin-bottom:2rem;}
-  .corner{width:16px;height:16px;}
-  .tl,.tr,.bl,.br{top:16px;}
-  .tl{top:16px;left:16px;}
-  .tr{top:16px;right:16px;}
-  .bl{bottom:16px;left:16px;}
-  .br{bottom:16px;right:16px;}
-  .sec-head{font-size:clamp(34px,10vw,52px);letter-spacing:-1px;}
-  .sec-body{font-size:11px;margin-bottom:2.5rem;}
-  .card-title{font-size:28px;}
-  .card-desc{font-size:11px;}
-  .loop-node{font-size:8px;padding:7px 12px;letter-spacing:2px;}
-  .stat-row{grid-template-columns:repeat(3,minmax(0,1fr));overflow:hidden;}
-  .stat-n{font-size:32px;}
-  .stat-l{font-size:7px;letter-spacing:1.5px;}
-  .stat-cell{padding:1.5rem 0.25rem;}
-  .lbl{font-size:9px;letter-spacing:3px;}
-  .foot-head{font-size:clamp(30px,10vw,52px);letter-spacing:-1px;}
-  .foot-body{font-size:11px;}
-  .foot-note{font-size:8px;letter-spacing:2px;}
-  .btn{padding:15px 28px;font-size:10px;letter-spacing:2px;width:100%;text-align:center;}
-  .footer{padding:3.5rem 1.25rem 5rem;}
-  .os-quote{font-size:11px;}
-}
+  @keyframes fadeUp {
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes scrollPulse {
+    0%, 100% { opacity: 0.3; }
+    50% { opacity: 0.8; }
+  }
+
+  /* RESPONSIVE */
+  @media (max-width: 720px) {
+    nav { padding: 1rem 1.25rem; }
+    .nav-links .nav-link { display: none; }
+    .tension-grid { grid-template-columns: 1fr; }
+    .tension-item { border-right: none; }
+    .tension-item:nth-child(3) { border-bottom: 0.5px solid var(--border); }
+    .pillar-row { grid-template-columns: 1fr; }
+    .pillar-card { border-right: none; }
+    .pillars-intro { grid-template-columns: 1fr; gap: 2rem; }
+    .inheritance-inner { grid-template-columns: 1fr; gap: 3rem; }
+    .assessment-inner { grid-template-columns: 1fr; gap: 3rem; }
+    .identity-anchor { padding: 2.5rem 1.5rem; }
+    footer { flex-direction: column; gap: 1rem; text-align: center; }
+    .footer-tagline { text-align: center; }
+    .hero-cta-group { flex-direction: column; align-items: flex-start; gap: 1rem; }
+  }
 </style>
 </head>
 <body>
-<div class="bg">
 
-  <div class="hero" id="top">
-    <div class="corner tl"></div><div class="corner tr"></div>
-    <div class="corner bl"></div><div class="corner br"></div>
-    <div class="badge"><span class="dot"></span>Free &middot; Identity Gap Assessment</div>
-    <span class="h1">5 Years</span>
-    <span class="h1-out">From Here</span>
-    <p class="hero-lead">Most people want a better life five years from now.<br>Very few audit the three pillars quietly determining whether they get there.</p>
-    <p class="hero-sub">Your identity is the operating system.<br>Your sessions are the input.<br>This assessment measures the gap — and reveals what your current patterns are conditioning you to become.</p>
-    <a href="assessment.html" class="btn">Begin the assessment &rarr;</a>
+<nav>
+  <a href="/" class="nav-brand">5 Years From Here</a>
+  <div class="nav-links">
+    <a href="#framework" class="nav-link">Framework</a>
+    <a href="#assessment" class="nav-link">Assessment</a>
+    <a href="assessment.html" class="nav-cta">Begin →</a>
   </div>
+</nav>
 
-  <div class="section section-border">
-    <span class="lbl">What gets measured</span>
-    <div class="sec-head">Three pillars<br>One gap report</div>
-    <p class="sec-body">Most assessments measure one dimension. This one measures the full system — because the gap in one pillar is almost always being caused by a breakdown in another.</p>
-    <div class="pillar-grid">
-      <div class="card">
-        <span class="card-num" style="color:#1D9E75;">01 &middot; Relationships</span>
-        <span class="card-title">Relationships</span>
-        <p class="card-desc">How you show up in your closest connections — partner, direct reports, and those you report to. Three variants. One relationship at a time.</p>
-      </div>
-      <div class="card">
-        <span class="card-num" style="color:#D4537E;">02 &middot; Health</span>
-        <span class="card-title">Health</span>
-        <p class="card-desc">The physical vehicle that carries everything you are building. Whether your current habits are an asset or a quiet liability to the future you want.</p>
-      </div>
-      <div class="card">
-        <span class="card-num" style="color:#7F77DD;">03 &middot; Identity</span>
-        <span class="card-title">Identity</span>
-        <p class="card-desc">The operating system beneath everything. Not who you say you are — but what your repeated sessions are quietly training you to become.</p>
-      </div>
-      <div class="card">
-        <span class="card-num" style="color:#BA7517;">04 &middot; Wealth</span>
-        <span class="card-title">Wealth</span>
-        <p class="card-desc">How you generate, protect, and multiply value in your career or business — and how many real moves you actually have if your situation changes.</p>
+<main>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-bg"></div>
+    <div class="page">
+      <p class="hero-tag">Free · Five-Year Alignment Assessment</p>
+      <h1 class="hero-headline">
+        You built the career.<br>
+        The income. The life.<br>
+        <em>So why does it feel like<br>you're running someone else's system?</em>
+      </h1>
+      <p class="hero-sub">
+        Your health, wealth, and relationships don't drift by accident.<br>
+        They follow the operating system you've been reinforcing — session by session — for years.
+      </p>
+      <div class="hero-cta-group">
+        <a href="assessment.html" class="btn-primary">Begin the Assessment →</a>
+        <span class="btn-meta">Free · 21 questions · 5–8 minutes</span>
       </div>
     </div>
-  </div>
-
-  <div class="section section-border">
-    <span class="lbl">The framework</span>
-    <div class="sec-head">Identity is the operating system</div>
-    <p class="sec-body">Most people try to change their results without upgrading their operating system. They install new goals on old software. The same patterns run. The same gaps return.<br><br><em>Who must you become for the future you want to become normal?</em></p>
-    <div class="loop">
-      <span class="loop-node">Session</span><span class="loop-arr">&rarr;</span>
-      <span class="loop-node">Behavior</span><span class="loop-arr">&rarr;</span>
-      <span class="loop-node">Feedback</span><span class="loop-arr">&rarr;</span>
-      <span class="loop-node">Adjustment</span><span class="loop-arr">&rarr;</span>
-      <span class="loop-node">Identity</span><span class="loop-arr">&#8635;</span>
+    <div class="hero-scroll-indicator">
+      <div class="scroll-line"></div>
     </div>
-    <p class="os-quote">"Your life five years from now will not be determined by what you want.<br>It will be determined by what your repeated sessions train you to become."</p>
-  </div>
+  </section>
 
-  <div class="section section-border">
-    <span class="lbl">The assessment</span>
-    <div class="sec-head">21 questions<br>One honest score</div>
-    <p class="sec-body">Every question is designed to surface the gap between who you are performing as and who you are actually becoming. Rate each dimension honestly — the score is only useful if the input is real.</p>
-    <div class="stat-row">
-      <div class="stat-cell"><span class="stat-n">21</span><span class="stat-l">Questions</span></div>
-      <div class="stat-cell"><span class="stat-n">4</span><span class="stat-l">Pillars</span></div>
-      <div class="stat-cell"><span class="stat-n">5&ndash;8</span><span class="stat-l">Minutes</span></div>
+  <!-- TENSION -->
+  <section class="tension" id="framework">
+    <div class="page">
+      <p class="section-label reveal">The pattern</p>
+      <h2 class="tension-statement reveal">
+        Most high-achieving women carry the same four silent contradictions.<br>
+        <strong>Not from weakness. From architecture.</strong>
+      </h2>
+      <div class="tension-grid reveal">
+        <div class="tension-item">
+          <p class="tension-num">01</p>
+          <h3 class="tension-title">Command at work.<br>Conflict at home.</h3>
+          <p class="tension-body">The communication mode that earns you respect in the boardroom creates distance with the people who matter most. The same identity — different context, wrong result.</p>
+        </div>
+        <div class="tension-item">
+          <p class="tension-num">02</p>
+          <h3 class="tension-title">High income.<br>Thin optionality.</h3>
+          <p class="tension-body">The lifestyle expanded with the salary. But real wealth is measured in moves — and for many accomplished women, the number of real moves hasn't grown alongside the income.</p>
+        </div>
+        <div class="tension-item">
+          <p class="tension-num">03</p>
+          <h3 class="tension-title">Cosmetic fixes.<br>Biological drift.</h3>
+          <p class="tension-body">The aesthetic routines are optimized. But VO2 max, muscle mass, cortisol, and biomarkers are running quietly in the wrong direction. The vehicle is being detailed but not maintained.</p>
+        </div>
+        <div class="tension-item">
+          <p class="tension-num">04</p>
+          <h3 class="tension-title">Hyper-independence.<br>Hidden isolation.</h3>
+          <p class="tension-body">Self-sufficiency became a survival strategy — and then a personality. Now it reads as a wall to the people trying to get close. The strength that protected you is limiting you.</p>
+        </div>
+      </div>
     </div>
-    <p class="sec-body" style="margin-bottom:0;">Your gap report returns four pillar scores plus an overall composite. The free Gap Discrepancy Audit that follows interprets the discrepancy between your current operating system and the identity your next five years require.</p>
-  </div>
+  </section>
 
-  <div class="section-border" id="assessment">
-    <div class="footer">
-      <span class="lbl">Begin</span>
-      <div class="foot-head">The gap does not close itself</div>
-      <p class="foot-body">Complete the 21-question assessment. Your free Gap Discrepancy Audit will be manually reviewed and returned to you within 24 hours — with a clear read on the discrepancy between where your current sessions are taking you and the identity your next five years demand.</p>
-      <a href="assessment.html" class="btn">Begin the gap assessment &rarr;</a>
-      <span class="foot-note">Free &middot; 5&ndash;8 minutes &middot; No email required</span>
+  <!-- PILLARS -->
+  <section class="pillars">
+    <div class="page">
+      <div class="pillars-intro reveal">
+        <h2 class="pillars-headline">Three visible pillars.<br><em>One invisible architecture.</em></h2>
+        <p class="pillars-desc">Most assessments measure one dimension in isolation. This one measures the full system — because a gap in one pillar is almost always being caused by a pattern in another.</p>
+      </div>
+      <div class="pillar-row reveal">
+        <div class="pillar-card">
+          <p class="pillar-number">01</p>
+          <h3 class="pillar-name">Health</h3>
+          <p class="pillar-sub">Physical capacity</p>
+          <p class="pillar-body">Your health is the vehicle carrying everything you are building. The assessment examines whether your current routines are an asset — or a quiet liability your next five years haven't yet demanded payment on.</p>
+        </div>
+        <div class="pillar-card">
+          <p class="pillar-number">02</p>
+          <h3 class="pillar-name">Wealth</h3>
+          <p class="pillar-sub">Economic optionality</p>
+          <p class="pillar-body">Wealth is not income. It is the number of real moves available to you when circumstances change. The assessment examines whether your financial patterns are expanding your options or quietly limiting them.</p>
+        </div>
+        <div class="pillar-card">
+          <p class="pillar-number">03</p>
+          <h3 class="pillar-name">Relationships</h3>
+          <p class="pillar-sub">Relational environment</p>
+          <p class="pillar-body">The quality of your life is shaped by the quality of your closest connections. The assessment examines how you communicate, establish trust, navigate tension, and show up in the relationships that shape everything else.</p>
+        </div>
+      </div>
+      <div class="identity-anchor reveal">
+        <p class="anchor-label">The identity anchor</p>
+        <h3 class="anchor-headline">Beneath all three pillars is your <em>identity</em> — the operating system you have been reinforcing with every repeated session.</h3>
+        <p class="anchor-body">Identity is not how you describe yourself. It is the architecture formed by the standards you accept, the decisions you repeat, the habits you reinforce, and the feedback loops you allow to continue. When the architecture is strong, the pillars reinforce one another. When it is misaligned, even a successful life accumulates quiet liabilities.</p>
+      </div>
     </div>
-  </div>
+  </section>
 
-</div>
+  <!-- FEEDBACK LOOP -->
+  <section class="loop-section">
+    <div class="page">
+      <p class="loop-question reveal">What are your current patterns training your life to become?</p>
+      <div class="loop-diagram reveal">
+        <span class="loop-node">Session</span>
+        <span class="loop-arrow">→</span>
+        <span class="loop-node">Behavior</span>
+        <span class="loop-arrow">→</span>
+        <span class="loop-node">Feedback</span>
+        <span class="loop-arrow">→</span>
+        <span class="loop-node">Adjustment</span>
+        <span class="loop-arrow">→</span>
+        <span class="loop-node identity-node">Identity</span>
+        <span class="loop-arrow">↻</span>
+      </div>
+      <p class="loop-deeper reveal">
+        The question is not simply: <em>what do you want five years from now?</em><br>
+        It is: what are your current sessions voting for?
+      </p>
+    </div>
+  </section>
+
+  <!-- INHERITANCE -->
+  <section class="inheritance">
+    <div class="page">
+      <div class="inheritance-inner">
+        <div class="inherit-text reveal">
+          <p class="inherit-overline">The standard you are building</p>
+          <h2 class="inherit-headline">Your future is not only a destination.<br><em>It is an inheritance.</em></h2>
+          <p class="inherit-body">The way you protect your health, manage your attention, respond under pressure, handle money, communicate with others, and make difficult decisions — this becomes part of the standard your life expresses.</p>
+          <p class="inherit-body">The purpose of this assessment is not to judge that standard. It is to make the invisible visible — so you can strengthen the architecture before the consequences compound.</p>
+        </div>
+        <div class="inherit-visual reveal">
+          <div class="stat-line">
+            <span class="stat-val">5</span>
+            <span class="stat-desc">Years of compounding — in the direction your current sessions are pointing</span>
+          </div>
+          <div class="stat-line">
+            <span class="stat-val">21</span>
+            <span class="stat-desc">Questions calibrated to surface the gap between intention and pattern</span>
+          </div>
+          <div class="stat-line">
+            <span class="stat-val">4</span>
+            <span class="stat-desc">Pillar scores plus a composite alignment score — delivered immediately</span>
+          </div>
+          <div class="stat-line">
+            <span class="stat-val">0</span>
+            <span class="stat-desc">Email required to receive your initial score</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ASSESSMENT DETAIL -->
+  <section class="assessment" id="assessment">
+    <div class="page">
+      <div class="assessment-inner reveal">
+        <div>
+          <h2 class="assess-headline">21 questions.<br><em>One honest score.</em></h2>
+          <p class="assess-desc">The Five-Year Alignment Assessment surfaces the gap between your stated intentions and the patterns your current operating system is reinforcing. Answer each question honestly. The score is not a label — it is a baseline.</p>
+          <a href="assessment.html" class="btn-primary">Begin the Assessment →</a>
+        </div>
+        <div class="score-table">
+          <div class="score-row">
+            <span class="score-label">Health</span>
+            <span class="score-desc">Physical capacity and the sustainability of your current routines</span>
+          </div>
+          <div class="score-row">
+            <span class="score-label">Wealth</span>
+            <span class="score-desc">Economic leverage, optionality, and financial pattern strength</span>
+          </div>
+          <div class="score-row">
+            <span class="score-label">Relationships</span>
+            <span class="score-desc">Trust, communication quality, and your relational environment</span>
+          </div>
+          <div class="score-row">
+            <span class="score-label">Identity</span>
+            <span class="score-desc">Strength of the architecture supporting the three visible pillars</span>
+          </div>
+          <div class="score-row overall">
+            <span class="score-label">Alignment</span>
+            <span class="score-desc">Composite view of the full system — where your sessions are taking you</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CLOSING -->
+  <section class="closing">
+    <div class="closing-bg"></div>
+    <div class="page">
+      <p class="closing-eyebrow reveal">The gap does not close itself</p>
+      <h2 class="closing-headline reveal">Five years<br>will pass<br><em>either way.</em></h2>
+      <p class="closing-sub reveal">The question is whether your current sessions are reinforcing the future you intend to build — or quietly moving you somewhere else.</p>
+      <div class="closing-cta reveal">
+        <a href="assessment.html" class="btn-primary" style="font-size:14px; padding: 1.1rem 2.8rem;">Begin the Five-Year Alignment Assessment →</a>
+      </div>
+      <p class="closing-meta reveal">Free · 21 questions · 5–8 minutes · No email required</p>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <a href="/" class="footer-brand">5 Years From Here</a>
+  <p class="footer-tagline">Your health, wealth, and relationships are the visible pillars of your life. Your identity is the invisible architecture holding them together.</p>
+</footer>
+
+<script>
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+      }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+</script>
 </body>
 </html>
