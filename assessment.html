@@ -314,7 +314,7 @@ function resultsH(){
     <input id="inp-email" class="field" type="email" placeholder="Email address" autocomplete="email">
   </div>
   <p id="form-err" style="font-size:13px;color:rgba(244,114,182,0.8);margin-bottom:0.85rem;opacity:0;min-height:1.2rem;font-family:var(--font-body);"></p>
-  <button id="submit-btn" class="nav-btn" onclick="submitForm();" style="width:100%;font-size:13px;padding:15px 24px;margin-bottom:1.5rem;letter-spacing:0.12em;">Send my Five-Year Alignment Report →</button>
+  <button id="submit-btn" class="nav-btn" onclick="submitForm();" style="width:100%;font-size:13px;padding:15px 24px;margin-bottom:1.5rem;letter-spacing:0.12em;">Get my Five-Year Alignment Report →</button>
   <div class="ibox">
     <p style="font-size:13px;color:var(--muted);line-height:1.85;">Your initial score is the baseline. Your report helps you understand what the pattern means and where a small, well-placed adjustment could create a meaningful return over time.</p>
   </div>
@@ -395,6 +395,12 @@ function selectOpt(opt){
   if(btn){btn.style.opacity="1";btn.style.cursor="pointer";}
 }
 
+const SB_URL="https://rpygrpvazkhcggfbkbij.supabase.co";
+const SB_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJweWdycHZhemtoY2dnZmJrYmlqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA3NzM2MTAsImV4cCI6MjA5NjM0OTYxMH0.WjxShLeIGGXWSXVT-8PBZMsOnpEOAFTLw4rBpjuxWiQ";
+
+function genSessionId(){return crypto.randomUUID?crypto.randomUUID():(Date.now().toString(36)+Math.random().toString(36).slice(2));}
+const SESSION_ID=genSessionId();
+
 async function submitForm(){
   const fn=document.getElementById("inp-name"),em=document.getElementById("inp-email"),err=document.getElementById("form-err"),btn=document.getElementById("submit-btn");
   if(!fn||!em)return;
@@ -403,28 +409,53 @@ async function submitForm(){
     if(err){err.textContent="Please enter your first name and a valid email.";err.style.opacity="1";}
     return;
   }
-  if(btn){btn.textContent="Sending...";btn.style.opacity="0.6";btn.disabled=true;}
+  if(btn){btn.textContent="Saving...";btn.style.opacity="0.6";btn.disabled=true;}
   const rS=scoreFor(answers,"Relationships"),iS=scoreFor(answers,"Identity Anchor"),wS=scoreFor(answers,"Wealth"),hS=scoreFor(answers,"Health");
   const overall=Math.round(((rS*11+iS*5+wS*4+hS)/21)*10)/10;
   const vname=VNAMES[variant]||"";
+  const hdrs={"Content-Type":"application/json","apikey":SB_KEY,"Authorization":"Bearer "+SB_KEY};
   try{
-    const fd=new FormData();
-    fd.append("name",fnv);fd.append("email",emv);
-    fd.append("relationship_variant",vname);
-    fd.append("relationships_score",rS+"/10 — "+lbl(rS));
-    fd.append("identity_anchor_score",iS+"/10 — "+lbl(iS));
-    fd.append("wealth_score",wS+"/10 — "+lbl(wS));
-    fd.append("health_score",hS+"/10 — "+lbl(hS));
-    fd.append("overall_score",overall+"/10 — "+lbl(overall));
-    const res=await fetch("https://formspree.io/f/xqejddao",{method:"POST",body:fd,headers:{"Accept":"application/json"}});
-    if(res.ok){firstName=fnv;phase="confirmed";r();}
-    else{
-      if(err){err.textContent="Something went wrong. Please try again.";err.style.opacity="1";}
-      if(btn){btn.textContent="Send my Five-Year Alignment Report →";btn.style.opacity="1";btn.disabled=false;}
-    }
+    // Insert response row
+    const r1=await fetch(SB_URL+"/rest/v1/assessment_responses",{
+      method:"POST",
+      headers:{...hdrs,"Prefer":"return=representation"},
+      body:JSON.stringify({
+        session_id:SESSION_ID,
+        name:fnv,
+        email:emv,
+        relationship_variant:vname,
+        answers:answers,
+        relationships_score:rS,
+        identity_score:iS,
+        wealth_score:wS,
+        health_score:hS,
+        overall_score:overall,
+        email_gated:true,
+        tier:"survey"
+      })
+    });
+    if(!r1.ok)throw new Error("response insert failed: "+r1.status);
+    const [row]=await r1.json();
+    const rid=row.id;
+    // Insert per-question answer rows
+    const ansRows=QA.map((q,i)=>({
+      response_id:rid,
+      session_id:SESSION_ID,
+      question_index:i,
+      pillar:q.pillar,
+      question_title:q.title,
+      answer:answers[i]||"",
+      score:answers[i]?SCORES[answers[i]]:null
+    }));
+    const r2=await fetch(SB_URL+"/rest/v1/assessment_answers",{
+      method:"POST",headers:hdrs,body:JSON.stringify(ansRows)
+    });
+    if(!r2.ok)throw new Error("answers insert failed: "+r2.status);
+    firstName=fnv;phase="confirmed";r();
   }catch(e){
-    if(err){err.textContent="Connection error. Please try again.";err.style.opacity="1";}
-    if(btn){btn.textContent="Send my Five-Year Alignment Report →";btn.style.opacity="1";btn.disabled=false;}
+    console.error("Supabase error:",e);
+    if(err){err.textContent="Something went wrong. Please try again.";err.style.opacity="1";}
+    if(btn){btn.textContent="Get my Five-Year Alignment Report →";btn.style.opacity="1";btn.disabled=false;}
   }
 }
 
