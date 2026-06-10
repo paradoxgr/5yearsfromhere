@@ -199,7 +199,7 @@ function lbl(v){if(v<=3)return"Critical gap";if(v<=6)return"Moderate";if(v<=9)re
 function scoreFor(ans,pillar){const[s,e]=RANGES[pillar];const sl=ans.slice(s,e+1);const valid=sl.filter(v=>v!==null);if(!valid.length)return 0;return Math.round((valid.reduce((a,b)=>a+SCORES[b],0)/valid.length)*10)/10;}
 function splitLbl(text){const ci=text.indexOf(": ");if(ci>0&&ci<42)return{head:text.slice(0,ci),body:text.slice(ci+2)};const ei=text.indexOf(" — ");if(ei>0&&ei<42)return{head:text.slice(0,ei),body:text.slice(ei+3)};return{head:text,body:""};}
 
-let phase="intro",idx=0,answers=Array(21).fill(null),variant=null,QA=[],firstName="";
+let phase="intro",idx=0,answers=Array(21).fill(null),variant=null,QA=[],firstName="",cachedScores=null;
 function buildQA(){QA=REL[variant].map(q=>({...q,pillar:"Relationships"})).concat(COMMON);}
 function r(){render();}
 
@@ -280,8 +280,7 @@ function questionH(){
 </div>`;}
 
 function resultsH(){
-  const rS=scoreFor(answers,"Relationships"),iS=scoreFor(answers,"Identity Anchor"),wS=scoreFor(answers,"Wealth"),hS=scoreFor(answers,"Health");
-  const overall=Math.round(((rS*11+iS*5+wS*4+hS)/21)*10)/10;
+  const{relationships_score:rS,identity_score:iS,wealth_score:wS,health_score:hS,overall_score:overall}=cachedScores;
   const vname=VNAMES[variant]||"";
   const pb=(pillar,score)=>{
     const p=PS[pillar];
@@ -333,9 +332,27 @@ function confirmedH(){return `<div class="wrap" style="text-align:center;padding
   <a href="index.html" style="font-size:12px;color:var(--muted);text-decoration:none;letter-spacing:0.1em;text-transform:uppercase;font-family:var(--font-body);border-bottom:0.5px solid var(--border);padding-bottom:2px;">Return to homepage</a>
 </div>`;}
 
-function goNext(){
+async function goNext(){
   if(!answers[idx])return;
-  if(idx===20){phase="results";r();return;}
+  if(idx===20){
+    phase="results";
+    document.getElementById("root").innerHTML=`<div class="wrap" style="text-align:center;padding-top:6rem;"><p style="color:var(--muted);letter-spacing:0.08em;font-size:13px;">Calculating your scores…</p></div>`;
+    try{
+      const resp=await fetch(SB_URL+"/functions/v1/score-assessment",{
+        method:"POST",
+        headers:{"Content-Type":"application/json","Authorization":"Bearer "+SB_KEY},
+        body:JSON.stringify({answers})
+      });
+      if(!resp.ok)throw new Error("scoring failed: "+resp.status);
+      cachedScores=await resp.json();
+    }catch(e){
+      console.warn("Edge Function unavailable, using local fallback:",e);
+      const rS=scoreFor(answers,"Relationships"),iS=scoreFor(answers,"Identity Anchor"),wS=scoreFor(answers,"Wealth"),hS=scoreFor(answers,"Health");
+      cachedScores={relationships_score:rS,identity_score:iS,wealth_score:wS,health_score:hS,overall_score:Math.round(((rS*11+iS*5+wS*4+hS)/21)*10)/10};
+    }
+    r();
+    return;
+  }
   idx++;
   phase="survey";
   r();
@@ -410,11 +427,12 @@ async function submitForm(){
     return;
   }
   if(btn){btn.textContent="Saving...";btn.style.opacity="0.6";btn.disabled=true;}
-  const rS=scoreFor(answers,"Relationships"),iS=scoreFor(answers,"Identity Anchor"),wS=scoreFor(answers,"Wealth"),hS=scoreFor(answers,"Health");
-  const overall=Math.round(((rS*11+iS*5+wS*4+hS)/21)*10)/10;
   const vname=VNAMES[variant]||"";
   const hdrs={"Content-Type":"application/json","apikey":SB_KEY,"Authorization":"Bearer "+SB_KEY};
   try{
+    // Scores already fetched from the Edge Function when transitioning to the
+    // results page (goNext → cachedScores). No second call needed here.
+    const{relationships_score:rS,identity_score:iS,wealth_score:wS,health_score:hS,overall_score:overall}=cachedScores;
     // Insert response row
     const r1=await fetch(SB_URL+"/rest/v1/assessment_responses",{
       method:"POST",
