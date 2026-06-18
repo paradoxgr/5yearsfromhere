@@ -1,0 +1,1038 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Your Five-Year Gap Assessment | 5 Years From Here</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ── TOKENS ─────────────────────────────────────── */
+    :root {
+      --bg:          #0B0910;
+      --surface:     #13101A;
+      --border:      rgba(255,255,255,0.07);
+      --text:        #EDE9F4;
+      --text-muted:  rgba(237,233,244,0.45);
+      --accent-hi:   #C084FC;   /* violet-400 */
+      --accent-lo:   #E879A0;   /* magenta    */
+      --accent-grad: linear-gradient(135deg, #C084FC 0%, #E879A0 100%);
+      --glow:        rgba(192,132,252,0.18);
+      --font-display: 'Cormorant Garamond', Georgia, serif;
+      --font-body:    'DM Sans', system-ui, sans-serif;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-body);
+      font-size: 15px;
+      line-height: 1.65;
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── AMBIENT GRAIN ──────────────────────────────── */
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+      background-size: 200px;
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.6;
+    }
+
+    /* ── LAYOUT ─────────────────────────────────────── */
+    .page {
+      position: relative;
+      z-index: 1;
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 64px 24px 96px;
+    }
+
+    /* ── GATE (email paywall) ───────────────────────── */
+    #gate {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 24px;
+      padding: 48px 0 32px;
+      animation: fadeUp .5s ease both;
+    }
+
+    .gate-eyebrow {
+      font-family: var(--font-body);
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    .gate-headline {
+      font-family: var(--font-display);
+      font-size: clamp(2rem, 6vw, 3rem);
+      font-weight: 400;
+      line-height: 1.15;
+      color: var(--text);
+    }
+
+    .gate-headline em {
+      font-style: italic;
+      background: var(--accent-grad);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .gate-sub {
+      max-width: 420px;
+      font-size: 14px;
+      color: var(--text-muted);
+      line-height: 1.7;
+    }
+
+    .gate-divider {
+      width: 40px;
+      height: 1px;
+      background: var(--accent-grad);
+      opacity: 0.5;
+      margin: 4px auto;
+    }
+
+    /* ── FORM ───────────────────────────────────────── */
+    .gate-form {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      width: 100%;
+      max-width: 360px;
+    }
+
+    .gate-form input {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text);
+      font-family: var(--font-body);
+      font-size: 14px;
+      padding: 14px 16px;
+      outline: none;
+      transition: border-color .2s;
+      width: 100%;
+    }
+
+    .gate-form input::placeholder { color: var(--text-muted); }
+    .gate-form input:focus { border-color: var(--accent-hi); }
+
+    .btn-primary {
+      background: var(--accent-grad);
+      border: none;
+      border-radius: 6px;
+      color: #fff;
+      cursor: pointer;
+      font-family: var(--font-body);
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: 0.06em;
+      padding: 15px 24px;
+      transition: opacity .2s, transform .15s;
+      width: 100%;
+    }
+    .btn-primary:hover { opacity: .88; transform: translateY(-1px); }
+    .btn-primary:active { transform: translateY(0); }
+    .btn-primary:disabled { opacity: .5; cursor: not-allowed; transform: none; }
+
+    .gate-privacy {
+      font-size: 11px;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    /* ── LOADING STATE ──────────────────────────────── */
+    #loading {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+      padding: 80px 0;
+      text-align: center;
+    }
+
+    .pulse-ring {
+      width: 56px; height: 56px;
+      border-radius: 50%;
+      border: 2px solid transparent;
+      border-top-color: var(--accent-hi);
+      border-right-color: var(--accent-lo);
+      animation: spin 1s linear infinite;
+    }
+
+    .loading-label {
+      font-family: var(--font-display);
+      font-size: 1.25rem;
+      font-style: italic;
+      color: var(--text-muted);
+    }
+
+    .loading-sub {
+      font-size: 12px;
+      color: var(--text-muted);
+      opacity: .6;
+    }
+
+    /* ── REPORT ─────────────────────────────────────── */
+    #report {
+      display: none;
+      flex-direction: column;
+      gap: 40px;
+      animation: fadeUp .6s ease both;
+    }
+
+    /* Header */
+    .report-header {
+      text-align: center;
+      padding-bottom: 32px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .report-eyebrow {
+      font-family: var(--font-body);
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 16px;
+    }
+
+    .report-name {
+      font-family: var(--font-display);
+      font-size: clamp(2.2rem, 7vw, 3.4rem);
+      font-weight: 300;
+      line-height: 1.1;
+    }
+
+    .report-name span {
+      background: var(--accent-grad);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .report-meta {
+      margin-top: 12px;
+      font-size: 12px;
+      color: var(--text-muted);
+      letter-spacing: 0.04em;
+    }
+
+    /* Overall score */
+    .score-ring-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .score-ring {
+      position: relative;
+      width: 120px; height: 120px;
+    }
+
+    .score-ring svg { transform: rotate(-90deg); }
+
+    .score-ring-num {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .score-ring-num .num {
+      font-family: var(--font-display);
+      font-size: 2.2rem;
+      font-weight: 400;
+      line-height: 1;
+      background: var(--accent-grad);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .score-ring-num .denom {
+      font-size: 10px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    .score-label {
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    /* Pillar bars */
+    .pillars {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .pillars-title {
+      font-family: var(--font-display);
+      font-size: 1.1rem;
+      font-weight: 400;
+      font-style: italic;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+    }
+
+    .pillar-row {
+      display: grid;
+      grid-template-columns: 130px 1fr 36px;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .pillar-label {
+      font-size: 12px;
+      letter-spacing: 0.06em;
+      color: var(--text-muted);
+      text-align: right;
+    }
+
+    .pillar-row.is-lowest .pillar-label { color: var(--accent-lo); }
+    .pillar-row.is-highest .pillar-label { color: var(--accent-hi); }
+
+    .pillar-track {
+      height: 3px;
+      background: rgba(255,255,255,0.06);
+      border-radius: 2px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .pillar-fill {
+      height: 100%;
+      border-radius: 2px;
+      background: rgba(255,255,255,0.2);
+      width: 0%;
+      transition: width 1.2s cubic-bezier(.22,1,.36,1);
+    }
+
+    .pillar-row.is-lowest .pillar-fill  { background: var(--accent-grad); box-shadow: 0 0 8px var(--glow); }
+    .pillar-row.is-highest .pillar-fill { background: linear-gradient(90deg, var(--accent-hi), #A78BFA); }
+
+    .pillar-score {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-muted);
+      text-align: right;
+    }
+
+    .pillar-row.is-lowest .pillar-score  { color: var(--accent-lo); }
+    .pillar-row.is-highest .pillar-score { color: var(--accent-hi); }
+
+    .pillar-badges {
+      display: flex;
+      gap: 8px;
+      margin-top: 8px;
+      flex-wrap: wrap;
+    }
+
+    .badge {
+      font-size: 10px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 4px 10px;
+      border-radius: 20px;
+      border: 1px solid;
+    }
+
+    .badge-gap   { border-color: var(--accent-lo); color: var(--accent-lo); }
+    .badge-lead  { border-color: var(--accent-hi); color: var(--accent-hi); }
+
+    /* Report prose */
+    .report-prose {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 32px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .report-prose::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: var(--accent-grad);
+      opacity: 0.5;
+    }
+
+    .prose-headline {
+      font-family: var(--font-display);
+      font-size: clamp(1.3rem, 4vw, 1.65rem);
+      font-weight: 400;
+      line-height: 1.25;
+      margin-bottom: 20px;
+      color: var(--text);
+    }
+
+    .prose-body {
+      font-size: 14.5px;
+      line-height: 1.78;
+      color: rgba(237,233,244,0.82);
+    }
+
+    .prose-body p + p { margin-top: 14px; }
+
+    /* Streaming cursor */
+    .cursor {
+      display: inline-block;
+      width: 2px;
+      height: 1em;
+      background: var(--accent-hi);
+      margin-left: 2px;
+      vertical-align: text-bottom;
+      animation: blink .8s step-end infinite;
+    }
+
+    /* CTA block */
+    .cta-block {
+      border: 1px solid rgba(192,132,252,0.2);
+      border-radius: 10px;
+      padding: 28px 32px;
+      background: rgba(192,132,252,0.04);
+      text-align: center;
+    }
+
+    .cta-label {
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 10px;
+    }
+
+    .cta-text {
+      font-family: var(--font-display);
+      font-size: clamp(1.1rem, 3.5vw, 1.35rem);
+      font-weight: 400;
+      font-style: italic;
+      line-height: 1.4;
+      color: var(--text);
+      margin-bottom: 20px;
+    }
+
+    .btn-cta {
+      display: inline-block;
+      background: var(--accent-grad);
+      border-radius: 6px;
+      color: #fff;
+      cursor: pointer;
+      font-family: var(--font-body);
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: 0.06em;
+      padding: 14px 28px;
+      text-decoration: none;
+      transition: opacity .2s, transform .15s;
+      border: none;
+    }
+
+    .btn-cta:hover { opacity: .88; transform: translateY(-1px); }
+
+    .cta-note {
+      margin-top: 12px;
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    /* Footer */
+    .report-footer {
+      text-align: center;
+      padding-top: 16px;
+      font-size: 11px;
+      color: var(--text-muted);
+      opacity: .5;
+    }
+
+    /* ── ANIMATIONS ─────────────────────────────────── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50%       { opacity: 0; }
+    }
+
+    /* ── ERROR STATE ────────────────────────────────── */
+    .error-msg {
+      background: rgba(248,113,113,.08);
+      border: 1px solid rgba(248,113,113,.2);
+      border-radius: 6px;
+      color: #FDA4AF;
+      font-size: 13px;
+      padding: 12px 16px;
+      display: none;
+      margin-top: 4px;
+    }
+
+    /* ── RESPONSIVE ─────────────────────────────────── */
+    @media (max-width: 480px) {
+      .page { padding: 40px 16px 72px; }
+      .report-prose { padding: 24px 20px; }
+      .cta-block { padding: 24px 20px; }
+      .pillar-row { grid-template-columns: 100px 1fr 32px; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="page">
+
+    <!-- ── GATE ──────────────────────────────────── -->
+    <section id="gate">
+      <p class="gate-eyebrow">5 Years From Here · Diagnostic</p>
+      <h1 class="gate-headline">Your <em>Gap Assessment</em><br>is ready.</h1>
+      <div class="gate-divider"></div>
+      <p class="gate-sub">
+        Enter your name and email to unlock your personal
+        Five-Year Gap Assessment — a diagnostic built on your
+        answers, not a generic quiz result.
+      </p>
+
+      <form class="gate-form" id="gateForm" onsubmit="return false;">
+        <input type="text"  id="firstName" placeholder="First name"     autocomplete="given-name"  required />
+        <input type="email" id="email"     placeholder="Email address"  autocomplete="email"       required />
+        <div class="error-msg" id="formError"></div>
+        <button class="btn-primary" id="submitBtn" type="button" onclick="handleGateSubmit()">
+          Unlock My Assessment
+        </button>
+      </form>
+
+      <p class="gate-privacy">No spam. No selling your data. Just your report.</p>
+    </section>
+
+    <!-- ── LOADING ────────────────────────────────── -->
+    <section id="loading">
+      <div class="pulse-ring"></div>
+      <p class="loading-label">Building your report…</p>
+      <p class="loading-sub">Analyzing your pillar scores and patterns</p>
+    </section>
+
+    <!-- ── REPORT ─────────────────────────────────── -->
+    <section id="report">
+
+      <!-- Header -->
+      <div class="report-header">
+        <p class="report-eyebrow">Gap Assessment · Private Report</p>
+        <h1 class="report-name" id="reportName">
+          <span id="nameDisplay"></span>
+        </h1>
+        <p class="report-meta" id="reportMeta"></p>
+      </div>
+
+      <!-- Overall score ring -->
+      <div class="score-ring-wrap">
+        <div class="score-ring">
+          <svg width="120" height="120" viewBox="0 0 120 120">
+            <circle cx="60" cy="60" r="52"
+              fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="5"/>
+            <circle id="scoreArc" cx="60" cy="60" r="52"
+              fill="none"
+              stroke="url(#arcGrad)" stroke-width="5"
+              stroke-linecap="round"
+              stroke-dasharray="327"
+              stroke-dashoffset="327"/>
+            <defs>
+              <linearGradient id="arcGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%"   stop-color="#C084FC"/>
+                <stop offset="100%" stop-color="#E879A0"/>
+              </linearGradient>
+            </defs>
+          </svg>
+          <div class="score-ring-num">
+            <span class="num" id="overallNum">—</span>
+            <span class="denom">/ 10</span>
+          </div>
+        </div>
+        <p class="score-label" id="overallLabel"></p>
+      </div>
+
+      <!-- Pillar bars -->
+      <div class="pillars">
+        <p class="pillars-title">Pillar breakdown</p>
+        <div class="pillar-row" id="row-relationships">
+          <span class="pillar-label">Relationships</span>
+          <div class="pillar-track"><div class="pillar-fill" id="fill-relationships"></div></div>
+          <span class="pillar-score" id="score-relationships">—</span>
+        </div>
+        <div class="pillar-row" id="row-identity">
+          <span class="pillar-label">Identity Anchor</span>
+          <div class="pillar-track"><div class="pillar-fill" id="fill-identity"></div></div>
+          <span class="pillar-score" id="score-identity">—</span>
+        </div>
+        <div class="pillar-row" id="row-wealth">
+          <span class="pillar-label">Wealth</span>
+          <div class="pillar-track"><div class="pillar-fill" id="fill-wealth"></div></div>
+          <span class="pillar-score" id="score-wealth">—</span>
+        </div>
+        <div class="pillar-row" id="row-health">
+          <span class="pillar-label">Health</span>
+          <div class="pillar-track"><div class="pillar-fill" id="fill-health"></div></div>
+          <span class="pillar-score" id="score-health">—</span>
+        </div>
+        <div class="pillar-badges" id="pillarBadges"></div>
+      </div>
+
+      <!-- AI-generated prose report -->
+      <div class="report-prose">
+        <h2 class="prose-headline">Your Five-Year Gap Assessment</h2>
+        <div class="prose-body" id="reportText">
+          <span class="cursor"></span>
+        </div>
+      </div>
+
+      <!-- Soft CTA -->
+      <div class="cta-block">
+        <p class="cta-label">Next step</p>
+        <p class="cta-text">
+          Oh, and if you want the deeper version — the $49 diagnostic shows
+          exactly where your operating system is leaking time, energy, focus,
+          and leverage.
+        </p>
+        <a class="btn-cta" href="https://5yearsfromhere.com/diagnostic" target="_blank">
+          Get the $49 Diagnostic
+        </a>
+        <p class="cta-note">49 questions · OCEAN profile · Full gap map · Delivered in 24 hrs</p>
+      </div>
+
+      <p class="report-footer">
+        © 5 Years From Here · Private diagnostic · Not for distribution
+      </p>
+
+    </section>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════
+       INTEGRATION LAYER
+       ─ Drop your Supabase + Anthropic keys below.
+       ─ assessment.html should pass scores via URL params
+         or sessionStorage before redirecting here.
+  ══════════════════════════════════════════════════════ -->
+  <script>
+    /* ── CONFIG ─── replace with your actual keys ── */
+    const SUPABASE_URL    = 'https://rpygrpvazkhcggfbkbij.supabase.co';
+    const SUPABASE_ANON   = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJweWdycHZhemtoY2dnZmJrYmlqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA3NzM2MTAsImV4cCI6MjA5NjM0OTYxMH0.WjxShLeIGGXWSXVT-8PBZMsOnpEOAFTLw4rBpjuxWiQ';
+    // Anthropic key is handled server-side via Supabase Edge Function
+    // or injected by your Vercel environment — see INTEGRATION NOTE below
+
+    /* ── SCORE INTAKE ───────────────────────────────────────────────────────
+       assessment.html should redirect here as:
+         report.html?r=7.2&rel=6.4&id=8.1&wl=5.9&hl=7.0&v=female&sid=<uuid>
+
+       OR write to sessionStorage before redirecting:
+         sessionStorage.setItem('5yfh_scores', JSON.stringify({ ... }))
+
+       Both methods are supported below.
+    ── */
+
+    function getScores() {
+      // 1) Try sessionStorage first (preferred — survives same-tab redirect)
+      const stored = sessionStorage.getItem('5yfh_scores');
+      if (stored) { try { return JSON.parse(stored); } catch(e) {} }
+
+      // 2) Fallback: URL params
+      const p = new URLSearchParams(window.location.search);
+      if (p.has('r')) {
+        return {
+          overall:       parseFloat(p.get('r')   || 0),
+          relationships: parseFloat(p.get('rel')  || 0),
+          identity:      parseFloat(p.get('id')   || 0),
+          wealth:        parseFloat(p.get('wl')   || 0),
+          health:        parseFloat(p.get('hl')   || 0),
+          variant:       p.get('v') || 'female',
+          submission_id: p.get('sid') || null,
+        };
+      }
+
+      // 3) Demo scores when testing standalone
+      return {
+        overall: 7.4, relationships: 6.1, identity: 8.2,
+        wealth: 5.8, health: 7.6, variant: 'female', submission_id: null,
+      };
+    }
+
+    const SCORES = getScores();
+
+    /* ── HELPERS ─────────────────────────────────── */
+    function scoreLabel(s) {
+      if (s < 4)   return 'Critical gap';
+      if (s < 7)   return 'Moderate alignment';
+      if (s < 8.5) return 'Strong foundation';
+      return 'High alignment';
+    }
+
+    function fmt(n) { return Number(n).toFixed(1); }
+
+    function pillarName(key) {
+      return { relationships:'Relationships', identity:'Identity Anchor',
+               wealth:'Wealth', health:'Health' }[key];
+    }
+
+    /* ── GATE SUBMIT ─────────────────────────────── */
+    async function handleGateSubmit() {
+      const firstName = document.getElementById('firstName').value.trim();
+      const email     = document.getElementById('email').value.trim();
+      const errEl     = document.getElementById('formError');
+      const btn       = document.getElementById('submitBtn');
+
+      errEl.style.display = 'none';
+
+      if (!firstName || !email || !/\S+@\S+\.\S+/.test(email)) {
+        errEl.textContent = 'Please enter your first name and a valid email address.';
+        errEl.style.display = 'block';
+        return;
+      }
+
+      btn.disabled = true;
+      btn.textContent = 'Generating your report…';
+
+      // Show loading
+      document.getElementById('gate').style.display    = 'none';
+      document.getElementById('loading').style.display = 'flex';
+
+      try {
+        // 1) Save lead + scores to Supabase
+        await saveToSupabase(firstName, email);
+
+        // 2) Generate AI report
+        const reportText = await generateReport(firstName);
+
+        // 3) Render report
+        showReport(firstName, reportText);
+
+      } catch(err) {
+        console.error(err);
+        document.getElementById('gate').style.display    = 'flex';
+        document.getElementById('loading').style.display = 'none';
+        btn.disabled = false;
+        btn.textContent = 'Unlock My Assessment';
+        errEl.textContent = 'Something went wrong. Please try again in a moment.';
+        errEl.style.display = 'block';
+      }
+    }
+
+    /* ── SUPABASE SAVE ───────────────────────────── */
+    async function saveToSupabase(firstName, email) {
+      const payload = {
+        first_name:        firstName,
+        email:             email,
+        overall_score:     SCORES.overall,
+        relationships_score: SCORES.relationships,
+        identity_score:    SCORES.identity,
+        wealth_score:      SCORES.wealth,
+        health_score:      SCORES.health,
+        variant:           SCORES.variant,
+        submission_id:     SCORES.submission_id,
+        created_at:        new Date().toISOString(),
+      };
+
+      const res = await fetch(`${SUPABASE_URL}/rest/v1/gap_report_leads`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'apikey': SUPABASE_ANON,
+          'Authorization': `Bearer ${SUPABASE_ANON}`,
+          'Prefer': 'return=minimal',
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if (!res.ok) {
+        const msg = await res.text();
+        console.warn('Supabase insert failed:', msg);
+        // Non-fatal — continue to generate report even if save fails
+      }
+    }
+
+    /* ── CLAUDE REPORT GENERATION ────────────────── */
+    /*
+      INTEGRATION NOTE:
+      Direct Anthropic API calls from the browser require your API key to be
+      exposed to the client — acceptable for internal/prototype use, but for
+      production you should proxy through a Supabase Edge Function.
+
+      Option A (prototype/internal): Set ANTHROPIC_KEY below.
+      Option B (production):         Call your Edge Function instead.
+      The code below supports both. Set USE_EDGE_FUNCTION = true for Option B.
+    */
+    const ANTHROPIC_KEY      = 'YOUR_ANTHROPIC_API_KEY';   // Option A — unused; key is server-side via Edge Function
+    const USE_EDGE_FUNCTION  = true;                        // using Option B: Supabase Edge Function proxy
+    const EDGE_FN_URL        = `${SUPABASE_URL}/functions/v1/generate-gap-report`;
+
+    async function generateReport(firstName) {
+      const s = SCORES;
+      const pillars = { relationships: s.relationships, identity: s.identity,
+                        wealth: s.wealth, health: s.health };
+
+      const sorted    = Object.entries(pillars).sort((a,b) => b[1]-a[1]);
+      const highest   = sorted[0];
+      const lowest    = sorted[sorted.length - 1];
+
+      const systemPrompt = `You are a diagnostic writer for 5 Years From Here, a premium identity development coaching platform for high-achieving professional women. Your job is to write a short, emotionally intelligent Gap Assessment report (under 250 words) based on a client's pillar scores.
+
+Tone: smooth, diagnostic, premium, conversational, encouraging — never generic, never shaming, never hype.
+
+Core positioning to weave in naturally:
+- "Most people at this level don't have an income problem… they have a leverage and focus problem."
+- "They're busy… but not compounding."
+- Identity is the invisible anchor that connects health, wealth, and relationships.
+- The goal is not motivation. It is upgrading the operating system so results become automatic.
+
+Output format: plain paragraphs only, NO markdown, NO bullet lists, NO headers. Just prose. Under 250 words. Five paragraphs maximum.`;
+
+      const userPrompt = `Write a personalized Gap Assessment for ${firstName}.
+
+Scores (out of 10):
+- Overall: ${fmt(s.overall)} (${scoreLabel(s.overall)})
+- Relationships: ${fmt(s.relationships)}
+- Identity Anchor: ${fmt(s.identity)}
+- Wealth: ${fmt(s.wealth)}
+- Health: ${fmt(s.health)}
+- Variant: ${s.variant}
+- Strongest pillar: ${pillarName(highest[0])} (${fmt(highest[1])})
+- Lowest pillar: ${pillarName(lowest[0])} (${fmt(lowest[1])})
+
+Structure the report with these five elements woven into natural prose:
+1. Opening affirmation — acknowledge what they've already built (especially if overall ≥ 7)
+2. Gap diagnosis — identify the source of friction, pressure, or uncertainty
+3. Pillar interpretation — briefly name strongest and weakest pillar without dwelling
+4. Identity anchor insight — how identity connects everything
+5. One clear next-step focus area
+
+End the report with one forward-looking sentence. Do NOT include any call to action or mention of the $49 diagnostic — that appears separately. Keep it under 250 words.`;
+
+      if (USE_EDGE_FUNCTION) {
+        // Option B: Supabase Edge Function proxy
+        const res = await fetch(EDGE_FN_URL, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${SUPABASE_ANON}`,
+          },
+          body: JSON.stringify({ firstName, scores: SCORES, systemPrompt, userPrompt }),
+        });
+        if (!res.ok) throw new Error(`Edge function error: ${res.status}`);
+        const data = await res.json();
+        return data.report || '';
+      } else {
+        // Option A: Direct Anthropic API
+        const res = await fetch('https://api.anthropic.com/v1/messages', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-api-key': ANTHROPIC_KEY,
+            'anthropic-version': '2023-06-01',
+            'anthropic-dangerous-direct-browser-access': 'true',
+          },
+          body: JSON.stringify({
+            model: 'claude-sonnet-4-6',
+            max_tokens: 600,
+            system: systemPrompt,
+            messages: [{ role: 'user', content: userPrompt }],
+          }),
+        });
+        if (!res.ok) throw new Error(`Anthropic API error: ${res.status}`);
+        const data = await res.json();
+        return data.content?.[0]?.text || '';
+      }
+    }
+
+    /* ── RENDER REPORT ───────────────────────────── */
+    function showReport(firstName, text) {
+      document.getElementById('loading').style.display = 'none';
+      document.getElementById('report').style.display  = 'flex';
+
+      // Name + meta
+      document.getElementById('nameDisplay').textContent = `${firstName}'s Report`;
+      document.getElementById('reportMeta').textContent  =
+        `${scoreLabel(SCORES.overall)} · ${new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'})}`;
+
+      // Overall score ring
+      const overall = SCORES.overall;
+      document.getElementById('overallNum').textContent   = fmt(overall);
+      document.getElementById('overallLabel').textContent = scoreLabel(overall);
+      setTimeout(() => {
+        const circumference = 327;
+        const offset = circumference - (overall / 10) * circumference;
+        document.getElementById('scoreArc').style.strokeDashoffset = offset;
+        document.getElementById('scoreArc').style.transition = 'stroke-dashoffset 1.4s cubic-bezier(.22,1,.36,1)';
+      }, 100);
+
+      // Pillar bars
+      const s = SCORES;
+      const pillars = [
+        { key: 'relationships', val: s.relationships },
+        { key: 'identity',      val: s.identity      },
+        { key: 'wealth',        val: s.wealth        },
+        { key: 'health',        val: s.health        },
+      ];
+
+      const sorted  = [...pillars].sort((a,b) => b.val - a.val);
+      const highest = sorted[0].key;
+      const lowest  = sorted[sorted.length-1].key;
+
+      pillars.forEach(({key, val}) => {
+        document.getElementById(`score-${key}`).textContent = fmt(val);
+        const row = document.getElementById(`row-${key}`);
+        if (key === lowest)  row.classList.add('is-lowest');
+        if (key === highest) row.classList.add('is-highest');
+        setTimeout(() => {
+          document.getElementById(`fill-${key}`).style.width = `${(val/10)*100}%`;
+        }, 200);
+      });
+
+      // Badges
+      const badgeEl = document.getElementById('pillarBadges');
+      badgeEl.innerHTML = `
+        <span class="badge badge-lead">↑ Strength: ${pillarName(highest)}</span>
+        <span class="badge badge-gap">↓ Priority gap: ${pillarName(lowest)}</span>`;
+
+      // Stream in prose text
+      streamText(text);
+    }
+
+    /* ── TEXT STREAMING EFFECT ───────────────────── */
+    function streamText(fullText) {
+      const el = document.getElementById('reportText');
+      el.innerHTML = '';
+
+      // Split into paragraphs, stream word by word
+      const paragraphs = fullText.split(/\n+/).filter(p => p.trim());
+      let paraIndex = 0;
+      let wordIndex = 0;
+      let words = [];
+      let currentP = null;
+
+      function nextPara() {
+        if (paraIndex >= paragraphs.length) {
+          // Done — remove cursor
+          const cursor = el.querySelector('.cursor');
+          if (cursor) cursor.remove();
+          return;
+        }
+        currentP = document.createElement('p');
+        el.appendChild(currentP);
+        words = paragraphs[paraIndex].split(' ');
+        wordIndex = 0;
+        paraIndex++;
+        setTimeout(nextWord, 0);
+      }
+
+      function nextWord() {
+        if (wordIndex >= words.length) {
+          // Add cursor after last word of each para temporarily
+          setTimeout(nextPara, 60);
+          return;
+        }
+        const word = words[wordIndex];
+        currentP.textContent += (wordIndex === 0 ? '' : ' ') + word;
+        wordIndex++;
+
+        // Scroll to bottom gently
+        window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+
+        // Speed: 18–30ms per word for natural feel
+        const delay = 22 + Math.random() * 14;
+        setTimeout(nextWord, delay);
+      }
+
+      // Kick off with blinking cursor placeholder
+      const cursorInit = document.createElement('span');
+      cursorInit.className = 'cursor';
+      el.appendChild(cursorInit);
+      setTimeout(() => {
+        cursorInit.remove();
+        nextPara();
+      }, 300);
+    }
+  </script>
+
+  <!--
+  ═══════════════════════════════════════════════════════
+  INTEGRATION CHECKLIST — read before deploying
+  ═══════════════════════════════════════════════════════
+
+  1. SUPABASE TABLE
+     Create this table in your Supabase project:
+
+     CREATE TABLE gap_report_leads (
+       id               uuid DEFAULT gen_random_uuid() PRIMARY KEY,
+       first_name       text,
+       email            text,
+       overall_score    numeric,
+       relationships_score numeric,
+       identity_score   numeric,
+       wealth_score     numeric,
+       health_score     numeric,
+       variant          text,
+       submission_id    uuid REFERENCES assessment_responses(id),
+       created_at       timestamptz DEFAULT now()
+     );
+
+     Enable RLS + add an insert policy for the anon role.
+
+  2. SCORE HANDOFF FROM assessment.html
+     In your assessment.html results handler, before redirecting:
+
+     sessionStorage.setItem('5yfh_scores', JSON.stringify({
+       overall:       overallScore,
+       relationships: relScore,
+       identity:      idScore,
+       wealth:        wlScore,
+       health:        hlScore,
+       variant:       selectedVariant,   // 'female' or 'male'
+       submission_id: supabaseRowId,
+     }));
+     window.location.href = '/report.html';
+
+  3. API KEY
+     Option A (prototype): paste ANTHROPIC_KEY above. Fine for internal use.
+     Option B (production): set USE_EDGE_FUNCTION = true and deploy a
+     Supabase Edge Function at /functions/v1/generate-gap-report that
+     accepts { firstName, scores, systemPrompt, userPrompt } and returns
+     { report: string }. Store ANTHROPIC_KEY in Supabase secrets.
+
+  4. SUPABASE_ANON
+     Replace 'YOUR_SUPABASE_ANON_KEY' with your project's anon/public key.
+
+  5. CTA LINK
+     Update the $49 diagnostic href to your actual Stripe/checkout URL.
+
+  ═══════════════════════════════════════════════════════
+  -->
+</body>
+</html>
