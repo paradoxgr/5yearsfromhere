@@ -836,14 +836,14 @@ Structure the report with these five elements woven into natural prose:
 End the report with one forward-looking sentence. Do NOT include any call to action or mention of the $49 diagnostic — that appears separately. Keep it under 250 words.`;
 
       if (USE_EDGE_FUNCTION) {
-        // Option B: Supabase Edge Function proxy
+        // Option B: Supabase Edge Function proxy — prompts are server-side
         const res = await fetch(EDGE_FN_URL, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${SUPABASE_ANON}`,
           },
-          body: JSON.stringify({ firstName, scores: SCORES, systemPrompt, userPrompt }),
+          body: JSON.stringify({ firstName, scores: SCORES }),
         });
         if (!res.ok) throw new Error(`Edge function error: ${res.status}`);
         const data = await res.json();
