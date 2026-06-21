@@ -9,60 +9,62 @@
  * Body:  { firstName: string, scores: { overall, relationships, identity, wealth, health, variant } }
  * 200:   { report: string }
  */
-
 const CORS = {
   "Access-Control-Allow-Origin":  "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
   "Access-Control-Allow-Methods": "POST, OPTIONS",
 };
-
 const json = (body: unknown, status = 200) =>
   new Response(JSON.stringify(body), {
     status,
     headers: { ...CORS, "Content-Type": "application/json" },
   });
-
 const PILLAR_LABELS: Record<string, string> = {
   relationships: "Relationships",
   identity:      "Identity Anchor",
   wealth:        "Wealth",
   health:        "Health",
 };
-
 function pillarRank(scores: Record<string, number>): { highest: string; lowest: string } {
   const keys = ["relationships", "identity", "wealth", "health"];
   const sorted = keys.sort((a, b) => scores[b] - scores[a]);
   return { highest: PILLAR_LABELS[sorted[0]], lowest: PILLAR_LABELS[sorted[sorted.length - 1]] };
 }
-
 function fmt(n: number): string {
   return Number(n).toFixed(1);
 }
 
-const SYSTEM_PROMPT = `You are a diagnostic writer for 5 Years From Here, a premium identity \
-development coaching platform for high-achieving professional women. \
+// Audience framing varies by variant; pronoun safety does not — the model
+// is told to avoid third-person pronouns entirely, so an unset or wrong
+// variant can never produce a misgendered report.
+function buildSystemPrompt(variant?: string): string {
+  const audience =
+    variant === "male"   ? "high-achieving professional men" :
+    variant === "female" ? "high-achieving professional women" :
+    "high-achieving professionals";
+  return `You are a diagnostic writer for 5 Years From Here, a premium identity \
+development coaching platform for ${audience}. \
 Write a short Gap Assessment report under 250 words. Tone: smooth, \
 diagnostic, premium, conversational, encouraging. No markdown, no \
-bullet lists, no headers. Plain prose paragraphs only. Five paragraphs max.`;
+bullet lists, no headers. Plain prose paragraphs only. Five paragraphs max. \
+Address the client directly by name and with "you" throughout — never use \
+third-person pronouns (he, him, his, she, her, hers) anywhere in the report.`;
+}
 
 Deno.serve(async (req: Request) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: CORS });
   if (req.method !== "POST")    return json({ error: "Method not allowed" }, 405);
-
-  let body: { firstName?: string; scores?: Record<string, number> };
+  let body: { firstName?: string; scores?: Record<string, number> & { variant?: string } };
   try {
     body = await req.json();
   } catch {
     return json({ error: "Invalid JSON body" }, 400);
   }
-
   const { firstName, scores } = body;
   if (!firstName || !scores) {
     return json({ error: "firstName and scores are required" }, 400);
   }
-
   const { highest, lowest } = pillarRank({ ...scores });
-
   const userPrompt = `Write a personalized Gap Assessment for ${firstName}.
 Scores out of 10 — Overall: ${fmt(scores.overall)}, Relationships: ${fmt(scores.relationships)}, \
 Identity Anchor: ${fmt(scores.identity)}, Wealth: ${fmt(scores.wealth)}, Health: ${fmt(scores.health)}.
@@ -71,10 +73,8 @@ Lowest pillar: ${lowest}.
 Structure: opening affirmation, gap diagnosis, pillar interpretation, \
 identity anchor insight, one clear next-step focus area.
 End with one forward-looking sentence. Under 250 words.`;
-
   const apiKey = Deno.env.get("ANTHROPIC_API_KEY");
   if (!apiKey) return json({ error: "ANTHROPIC_API_KEY not configured" }, 500);
-
   const res = await fetch("https://api.anthropic.com/v1/messages", {
     method: "POST",
     headers: {
@@ -85,16 +85,14 @@ End with one forward-looking sentence. Under 250 words.`;
     body: JSON.stringify({
       model:      "claude-sonnet-4-6",
       max_tokens: 600,
-      system:     SYSTEM_PROMPT,
+      system:     buildSystemPrompt(scores.variant),
       messages:   [{ role: "user", content: userPrompt }],
     }),
   });
-
   if (!res.ok) {
     const err = await res.text();
     return json({ error: `Anthropic API error: ${res.status}`, detail: err }, 502);
   }
-
   const data = await res.json();
   const report = data.content?.[0]?.text ?? "";
   return json({ report });

@@ -199,13 +199,14 @@ function lbl(v){if(v<=3)return"Critical gap";if(v<=6)return"Moderate";if(v<=9)re
 function scoreFor(ans,pillar){const[s,e]=RANGES[pillar];const sl=ans.slice(s,e+1);const valid=sl.filter(v=>v!==null);if(!valid.length)return 0;return Math.round((valid.reduce((a,b)=>a+SCORES[b],0)/valid.length)*10)/10;}
 function splitLbl(text){const ci=text.indexOf(": ");if(ci>0&&ci<42)return{head:text.slice(0,ci),body:text.slice(ci+2)};const ei=text.indexOf(" — ");if(ei>0&&ei<42)return{head:text.slice(0,ei),body:text.slice(ei+3)};return{head:text,body:""};}
 
-let phase="intro",idx=0,answers=Array(21).fill(null),variant=null,QA=[],firstName="",cachedScores=null;
+let phase="intro",idx=0,answers=Array(21).fill(null),variant=null,gender=null,QA=[],firstName="",cachedScores=null;
 function buildQA(){QA=REL[variant].map(q=>({...q,pillar:"Relationships"})).concat(COMMON);}
 function r(){render();}
 
 function render(){
   const root=document.getElementById("root");
   if(phase==="intro"){root.innerHTML=introH();return;}
+  if(phase==="gender"){root.innerHTML=genderH();return;}
   if(phase==="rel-brief"){root.innerHTML=relH();return;}
   if(phase==="results"){root.innerHTML=resultsH();return;}
   if(phase==="confirmed"){root.innerHTML=confirmedH();return;}
@@ -225,9 +226,47 @@ function introH(){return `<div class="wrap" style="text-align:center;padding-top
     <span class="pill" style="background:rgba(245,158,11,0.08);color:rgba(245,158,11,0.8);border:0.5px solid rgba(245,158,11,0.2);">Wealth</span>
     <span class="pill" style="background:rgba(244,114,182,0.08);color:rgba(244,114,182,0.8);border:0.5px solid rgba(244,114,182,0.2);">Health</span>
   </div>
-  <button class="nav-btn" onclick="phase='rel-brief';r();" style="font-size:13px;padding:15px 44px;">Begin assessment →</button>
+  <button class="nav-btn" onclick="phase='gender';r();" style="font-size:13px;padding:15px 44px;">Begin assessment →</button>
   <p style="font-size:11px;color:rgba(245,240,247,0.3);margin-top:1.25rem;letter-spacing:0.08em;">21 questions · 5–8 minutes · No email required for your initial score</p>
 </div>`;}
+
+function genderH(){
+  const sel=gender;
+  function gs(g){
+    if(sel===g)return`border:1.5px solid rgba(232,121,249,0.6);background:rgba(232,121,249,0.08);color:var(--off-white);`;
+    return`border:0.5px solid var(--border);background:transparent;color:var(--muted);`;
+  }
+  return `<div class="wrap" style="padding-top:2.5rem;padding-bottom:3rem;">
+  <div style="border-left:2px solid rgba(232,121,249,0.4);padding-left:1.5rem;margin-bottom:2.5rem;">
+    <p style="font-family:'Cormorant Garamond',Georgia,serif;font-size:clamp(1.4rem,4vw,2rem);font-weight:300;color:var(--off-white);line-height:1.35;margin-bottom:1rem;">Before we begin.</p>
+    <p style="font-size:14px;color:var(--muted);line-height:1.85;">Your report is written specifically for you. This helps us get the voice right.</p>
+  </div>
+  <p style="font-size:10px;letter-spacing:0.25em;text-transform:uppercase;color:var(--muted);margin-bottom:0.85rem;font-family:var(--font-body);">Which best describes you?</p>
+  <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:2rem;">
+    <button id="gp-female" class="vpill" onclick="selectGender('female');" style="${gs('female')}">Woman</button>
+    <button id="gp-male" class="vpill" onclick="selectGender('male');" style="${gs('male')}">Man</button>
+  </div>
+  <button id="gender-cta" class="nav-btn" onclick="if(gender){phase='rel-brief';r();}" style="opacity:${sel?1:0.3};cursor:${sel?'pointer':'not-allowed'};">Continue →</button>
+</div>`;}
+
+function selectGender(g){
+  gender=g;
+  ["female","male"].forEach(opt=>{
+    const el=document.getElementById("gp-"+opt);
+    if(!el)return;
+    if(opt===g){
+      el.style.border="1.5px solid rgba(232,121,249,0.6)";
+      el.style.background="rgba(232,121,249,0.08)";
+      el.style.color="var(--off-white)";
+    }else{
+      el.style.border="0.5px solid var(--border)";
+      el.style.background="transparent";
+      el.style.color="var(--muted)";
+    }
+  });
+  const btn=document.getElementById("gender-cta");
+  if(btn){btn.style.opacity="1";btn.style.cursor="pointer";}
+}
 
 function relH(){
   const sel=variant;
@@ -464,7 +503,7 @@ function goToReport(){
     identity:iS,
     wealth:wS,
     health:hS,
-    variant:variant||"female",
+    variant:gender||"female",
     submission_id:null
   }));
   saveRawResponse(); // fire-and-forget, does not block the redirect
