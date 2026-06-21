@@ -308,12 +308,7 @@ function resultsH(){
     <p style="font-family:'Cormorant Garamond',Georgia,serif;font-size:clamp(1.3rem,3vw,1.65rem);font-weight:300;color:var(--off-white);line-height:1.4;margin-bottom:0.85rem;">Your Five-Year Alignment Report</p>
     <p style="font-size:14px;color:var(--muted);line-height:1.85;">Your scores show where alignment is strong and where friction may be quietly accumulating. Your report goes one level deeper — it interprets the relationship between your three visible pillars and the identity architecture supporting them.</p>
   </div>
-  <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:0.85rem;">
-    <input id="inp-name" class="field" type="text" placeholder="First name" autocomplete="given-name">
-    <input id="inp-email" class="field" type="email" placeholder="Email address" autocomplete="email">
-  </div>
-  <p id="form-err" style="font-size:13px;color:rgba(244,114,182,0.8);margin-bottom:0.85rem;opacity:0;min-height:1.2rem;font-family:var(--font-body);"></p>
-  <button id="submit-btn" class="nav-btn" onclick="submitForm();" style="width:100%;font-size:13px;padding:15px 24px;margin-bottom:1.5rem;letter-spacing:0.12em;">Get my Five-Year Alignment Report →</button>
+  <button id="submit-btn" class="nav-btn" onclick="goToReport();" style="width:100%;font-size:13px;padding:15px 24px;margin-bottom:1.5rem;letter-spacing:0.12em;">See My In-Depth Gap Report →</button>
   <div class="ibox">
     <p style="font-size:13px;color:var(--muted);line-height:1.85;">Your initial score is the baseline. Your report helps you understand what the pattern means and where a small, well-placed adjustment could create a meaningful return over time.</p>
   </div>
@@ -418,29 +413,18 @@ const SB_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZ
 function genSessionId(){return crypto.randomUUID?crypto.randomUUID():(Date.now().toString(36)+Math.random().toString(36).slice(2));}
 const SESSION_ID=genSessionId();
 
-async function submitForm(){
-  const fn=document.getElementById("inp-name"),em=document.getElementById("inp-email"),err=document.getElementById("form-err"),btn=document.getElementById("submit-btn");
-  if(!fn||!em)return;
-  const fnv=fn.value.trim(),emv=em.value.trim();
-  if(!fnv||!emv||!emv.includes("@")||!emv.includes(".")){
-    if(err){err.textContent="Please enter your first name and a valid email.";err.style.opacity="1";}
-    return;
-  }
-  if(btn){btn.textContent="Saving...";btn.style.opacity="0.6";btn.disabled=true;}
-  const vname=VNAMES[variant]||"";
-  const hdrs={"Content-Type":"application/json","apikey":SB_KEY,"Authorization":"Bearer "+SB_KEY};
+// Best-effort, non-blocking: logs the raw answers/scores for analytics.
+// No name/email at this stage — that's collected later, once, on report.html.
+async function saveRawResponse(){
   try{
-    // Scores already fetched from the Edge Function when transitioning to the
-    // results page (goNext → cachedScores). No second call needed here.
+    const vname=VNAMES[variant]||"";
     const{relationships_score:rS,identity_score:iS,wealth_score:wS,health_score:hS,overall_score:overall}=cachedScores;
-    // Insert response row
+    const hdrs={"Content-Type":"application/json","apikey":SB_KEY,"Authorization":"Bearer "+SB_KEY};
     const r1=await fetch(SB_URL+"/rest/v1/assessment_responses",{
       method:"POST",
       headers:{...hdrs,"Prefer":"return=representation"},
       body:JSON.stringify({
         session_id:SESSION_ID,
-        name:fnv,
-        email:emv,
         relationship_variant:vname,
         answers:answers,
         relationships_score:rS,
@@ -448,14 +432,13 @@ async function submitForm(){
         wealth_score:wS,
         health_score:hS,
         overall_score:overall,
-        email_gated:true,
+        email_gated:false,
         tier:"survey"
       })
     });
-    if(!r1.ok)throw new Error("response insert failed: "+r1.status);
+    if(!r1.ok){console.warn("raw response insert skipped:",r1.status);return;}
     const [row]=await r1.json();
     const rid=row.id;
-    // Insert per-question answer rows
     const ansRows=QA.map((q,i)=>({
       response_id:rid,
       session_id:SESSION_ID,
@@ -465,16 +448,27 @@ async function submitForm(){
       answer:answers[i]||"",
       score:answers[i]?SCORES[answers[i]]:null
     }));
-    const r2=await fetch(SB_URL+"/rest/v1/assessment_answers",{
-      method:"POST",headers:hdrs,body:JSON.stringify(ansRows)
-    });
-    if(!r2.ok)throw new Error("answers insert failed: "+r2.status);
-    firstName=fnv;phase="confirmed";r();
+    await fetch(SB_URL+"/rest/v1/assessment_answers",{method:"POST",headers:hdrs,body:JSON.stringify(ansRows)});
   }catch(e){
-    console.error("Supabase error:",e);
-    if(err){err.textContent="Something went wrong. Please try again.";err.style.opacity="1";}
-    if(btn){btn.textContent="Get my Five-Year Alignment Report →";btn.style.opacity="1";btn.disabled=false;}
+    console.warn("raw response save failed (non-blocking):",e);
   }
+}
+
+// Score is free. This is the one and only handoff point to report.html,
+// which owns the single name/email gate before generating the AI report.
+function goToReport(){
+  const{relationships_score:rS,identity_score:iS,wealth_score:wS,health_score:hS,overall_score:overall}=cachedScores;
+  sessionStorage.setItem("5yfh_scores",JSON.stringify({
+    overall:overall,
+    relationships:rS,
+    identity:iS,
+    wealth:wS,
+    health:hS,
+    variant:variant||"female",
+    submission_id:null
+  }));
+  saveRawResponse(); // fire-and-forget, does not block the redirect
+  window.location.href="report.html";
 }
 
 render();
