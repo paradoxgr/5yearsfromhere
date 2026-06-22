@@ -877,7 +877,7 @@ End the report with one forward-looking sentence. Do NOT include any call to act
       document.getElementById('report').style.display  = 'flex';
 
       // Name + meta
-      document.getElementById('nameDisplay').textContent = `${firstName}'s Report`;
+      document.getElementById('nameDisplay').textContent = `${firstName.charAt(0).toUpperCase() + firstName.slice(1)}'s Report`;
       document.getElementById('reportMeta').textContent  =
         `${scoreLabel(SCORES.overall)} · ${new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'})}`;
 
