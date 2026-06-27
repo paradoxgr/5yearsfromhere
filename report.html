@@ -729,7 +729,7 @@
         await saveToSupabase(firstName, email);
 
         // 2) Generate AI report
-        const reportText = await generateReport(firstName);
+        const reportText = await generateReport(firstName, email);
 
         // 3) Render report
         showReport(firstName, reportText);
@@ -793,7 +793,7 @@
     const USE_EDGE_FUNCTION  = true;                        // using Option B: Supabase Edge Function proxy
     const EDGE_FN_URL        = `${SUPABASE_URL}/functions/v1/generate-gap-report`;
 
-    async function generateReport(firstName) {
+    async function generateReport(firstName, email) {
       const s = SCORES;
       const pillars = { relationships: s.relationships, identity: s.identity,
                         wealth: s.wealth, health: s.health };
@@ -843,7 +843,7 @@ End the report with one forward-looking sentence. Do NOT include any call to act
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${SUPABASE_ANON}`,
           },
-          body: JSON.stringify({ firstName, scores: SCORES }),
+          body: JSON.stringify({ firstName, scores: SCORES, email }),
         });
         if (!res.ok) throw new Error(`Edge function error: ${res.status}`);
         const data = await res.json();
